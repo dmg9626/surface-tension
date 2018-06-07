@@ -104,5 +104,4 @@ public class SurfaceMaterial : MonoBehaviour
 
         InitializeSurfaceSpeeds(player.equippedMaterial);
     }
-
 }

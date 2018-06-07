@@ -5,25 +5,35 @@ using UnityEngine;
 public class SurfaceCheck : MonoBehaviour {
 
     /// <summary>
-    /// Definition for direction object is facing
+    /// Definition for direction player is facing
     /// </summary>
     public enum Direction
     {
         LEFT = -1,
-        RIGHT = 1
+        RIGHT = 1,
+        DOWN = 2
     };
 
     /// <summary>
-    /// Definition for surface the object is touching
+    /// Holds information about the current frame to drive movement and animations
     /// </summary>
-    public enum Surface
+    public struct State
     {
-        OBJECT,
-        GROUND,
-        SLOPE,
-        ALL,
-        NONE
+        public Direction direction;
+        public Direction oppDirection;
+
+        public GameObject objRight; // The object the player is facing 
+        public GameObject playerRight; // The object the player is facing
+        public GameObject objLeft; // The object opposite the side the player is facing
+        public GameObject playerLeft; // The object the player is facing
+        public GameObject objGround; // The game object on the ground
+
+        public Vector2 velocity; // Stores the player's velocity at the end of the frame
+
+        public float distToGround;
     };
+
+    private bool initialBounce = true;
 
     [HideInInspector]
     public bool touchingLeftWall = false;
@@ -31,122 +41,212 @@ public class SurfaceCheck : MonoBehaviour {
     [HideInInspector]
     public bool touchingRightWall = false;
 
+    private State currentState;
+    private State previousState;
+
+    private Rigidbody2D body;
+ 
+    private void Start()
+    {
+        body = GetComponent<Rigidbody2D>();
+    }
+
     // Update is called once per frame
     void Update () {
-        touchingLeftWall = Touching(Direction.LEFT, Surface.ALL);
-        touchingRightWall = Touching(Direction.RIGHT, Surface.ALL);
-	}
+        SetCurrentSurroundings();
+        currentState.direction = GetDirection(body.velocity.x) ?? previousState.direction;
+        currentState.oppDirection = GetDirection(-1 * body.velocity.x) ?? previousState.oppDirection;
 
-    /// <summary>
-    /// Returns whether object is touching ground
-    /// </summary>
-    private bool TouchingGround(Surface surface)
-    {
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        touchingLeftWall = ObjectExists(currentState.objLeft);
+        touchingRightWall = ObjectExists(currentState.objRight);
 
-        // Calculate bottom of object:
-        // Bottom of BoxCollider + edgeRadius around collider (subtraction because in downward direction)
-        float objectHeight = collider.bounds.size.y;
-        float objectBottom = collider.bounds.center.y - (objectHeight / 2F) - collider.edgeRadius - .05f;
+        GameController.material? groundType = GetMaterial(currentState.objGround);
+        GameController.material? prevGroundType = GetMaterial(previousState.objGround);
+        
+        if (groundType != null && groundType != GameController.material.BOUNCE)
+        {
+            initialBounce = true;
+        }
+        
+        if (groundType == GameController.material.BOUNCE && !(prevGroundType == GameController.material.BOUNCE))
+        {
+            float initialBounceBonus = 0;
 
-        // Calculate left edge of object:
-        // Left edge of BoxCollider + 1/2 of edgeRadius (subtraction because in leftward direction)
-        float objectXMin = collider.bounds.center.x - (collider.bounds.size.x / 2) - (collider.edgeRadius / 2);
+            if (initialBounce)
+            {
+                initialBounceBonus = 1f;
+                initialBounce = false;
+            }
 
-        // Create vector positioned at bottom of object sprite
-        Vector2 origin = new Vector2(objectXMin, objectBottom);
+            // .79 because guestimation said so 
+            body.velocity = new Vector2(previousState.velocity.x, Mathf.Abs(previousState.velocity.y) + .79f + initialBounceBonus);
+        }
 
-        float distance = collider.bounds.size.x + collider.edgeRadius;
+        if (body.velocity.x > 0 && groundType == GameController.material.SLIP &&
+            currentState.playerLeft == null && currentState.playerRight == null)
+        {
+            body.velocity = new Vector2(previousState.velocity.x, body.velocity.y);
+        }
 
-        return IsTouching(origin, Vector2.up, distance, surface);
+        previousState = currentState;
+        previousState.velocity = body.velocity;
+        
     }
 
     /// <summary>
-    /// If object is touching an object, return it
+    /// Performs raycasts to check surfaces player is contacting, and stores those GameObjects in currentState
     /// </summary>
-    private bool Touching(Direction? direction, Surface surface)
+    private void SetCurrentSurroundings()
     {
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        float normalLeniency = .05f;
 
-        // Calculate bottom of object:
-        // Bottom of BoxCollider
-        float objectYMin = collider.bounds.center.y - (collider.bounds.size.y / 2f) - (collider.edgeRadius / 2f) - .02f;
+        // Check for left/right collisions on Objects layer
+        currentState.objLeft = RayCheck(currentState.oppDirection, null, normalLeniency, false);
+        currentState.objRight = RayCheck(currentState.direction, null, normalLeniency, false);
 
-        // Calculate distance to left edge of object:
-        // Half the collider + the radius + a little
-        // Left or Right determines the side of the object the ray is being shot from
-        float objectXMin = (collider.bounds.size.x / 2) + (collider.edgeRadius) + .03f;
-        if (direction == Direction.LEFT)
+        currentState.playerLeft = RayCheck(currentState.oppDirection, null, normalLeniency, true);
+        currentState.playerRight = RayCheck(currentState.oppDirection, null, normalLeniency, true);
+
+        // Check surface below player on both layers
+        currentState.objGround = RayCheck(Direction.DOWN, null, normalLeniency, false);
+    }
+
+    private bool ObjectExists(GameObject gameObject)
+    {
+        if (gameObject != null)
         {
-            objectXMin = collider.bounds.center.x - objectXMin;
+            return true;
         }
         else
         {
-            objectXMin = collider.bounds.center.x + objectXMin;
+            return false;
         }
+    }
 
-        // Create vector positioned at bottom of object sprite
-        Vector2 origin = new Vector2(objectXMin, objectYMin);
-
-        float distance = collider.bounds.size.y + collider.edgeRadius + .04f;
-
-        return IsTouching(origin, Vector2.up, distance, surface);
+    private GameController.material? GetMaterial(GameObject gameObject)
+    {
+        if (gameObject)
+        {
+            return gameObject.GetComponent<SurfaceMaterial>().type;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /// <summary>
-    /// Runs and returns whether the raycast hit the desired target
+    /// Performs raycast alongside player collider
     /// </summary>
-    private bool IsTouching(Vector2 origin, Vector2 direction, float distance, Surface surface)
+    /// <param name="direction">Direction of raycast</param>
+    /// <param name="layerMaskName">Layer to check for collision</param>
+    /// <param name="leniency">Leniency applied for ground/object raycasts (zero unless direction = down or pressing Grab)</param>
+    /// <returns>Returns: Any GameObject it collides with</returns>
+    private GameObject RayCheck(Direction direction, string layerMaskName, float leniency, bool playerCast)
     {
-        if (surface == Surface.ALL)
-        {
-            if (ObjectCast(origin, direction, distance) != Surface.NONE)
-            {
-                return true;
-            }
-            else if (GroundCast(origin, direction, distance) != Surface.NONE)
-            {
-                return true;
-            }
-        }
-        else if (ObjectCast(origin, direction, distance) == surface)
-        {
-            return true;
-        }
-        else if (GroundCast(origin, direction, distance) == surface)
-        {
-            return true;
-        }
-        return false;
-    }
+        // Raycast parameters
+        float rayDistance;
+        Vector2 rayOrigin;
+        Vector2 rayDirection;
+        RaycastHit2D raycast;
 
-    private Surface ObjectCast(Vector2 origin, Vector2 direction, float distance)
-    {
-        RaycastHit2D raycast = Physics2D.Raycast(origin, direction, distance, LayerMask.GetMask("Object"));
+        // X,Y points used to calculate raycast origin
+        float playerBottom;
+        float originXPos;
+
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+
+        if (direction == Direction.DOWN)
+        {
+            // Calculate bottom of player:
+            // Bottom of BoxCollider + edgeRadius around collider + leniency (subtraction because in downward direction)
+            playerBottom = collider.bounds.min.y - collider.edgeRadius - leniency;
+
+            // Calculate left edge of player (don't need leniency here):
+            // Edge of BoxCollider + 1/2 of edgeRadius
+            // Starts on the side opposite the direction the player is facing
+            if (currentState.direction == Direction.RIGHT)
+            {
+                originXPos = collider.bounds.min.x - (collider.edgeRadius / 2);
+                rayDirection = Vector2.right;
+            }
+            else
+            {
+                originXPos = collider.bounds.max.x + (collider.edgeRadius / 2);
+                rayDirection = Vector2.left;
+            }
+
+            // Distance = width + edge radius
+            rayDistance = collider.bounds.size.x + collider.edgeRadius;
+        }
+        else
+        {
+            // Calculate bottom of player (don't need leniency here):
+            // Bottom of BoxCollider
+            playerBottom = collider.bounds.min.y - (collider.edgeRadius / 2f);
+
+            // Calculate distance to left edge of player:
+            // Half the collider + the radius + leniency
+            originXPos = (collider.bounds.size.x / 2) + (collider.edgeRadius) + leniency;
+
+            // Left or Right determines the side of the player the ray is being shot from
+            if (direction == Direction.LEFT)
+            {
+                originXPos = collider.bounds.center.x - originXPos;
+            }
+            else
+            {
+                originXPos = collider.bounds.center.x + originXPos;
+            }
+
+            rayDirection = Vector2.up;
+
+            // Distance = height + edge radius
+            rayDistance = collider.bounds.size.y + collider.edgeRadius;
+        }
+
+        // Raycast origin
+        rayOrigin = new Vector2(originXPos, playerBottom);
+
+        // Perform raycast (leave out layermask if null)
+        if (layerMaskName != null)
+        {
+            raycast = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance, LayerMask.GetMask(layerMaskName));
+        }
+        else
+        {
+            raycast = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
+        }
+
+        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
+
+        // Check for collision
         if (raycast.collider != null)
         {
-            if (raycast.collider.tag == "Object")
+            if((raycast.collider.tag == "Player" && playerCast) ||
+                (raycast.collider.tag != "Player" && !playerCast))
             {
-                return Surface.OBJECT;
+                return raycast.collider.gameObject;
             }
         }
-        return Surface.NONE;
+
+        return null;
     }
 
-    private Surface GroundCast(Vector2 origin, Vector2 direction, float distance)
+    /// <summary>
+    /// Returns direction of given movement
+    /// </summary>
+    /// <param name="movement">Player movement</param>
+    private Direction? GetDirection(float movement)
     {
-        RaycastHit2D raycast = Physics2D.Raycast(origin, direction, distance, LayerMask.GetMask("Ground"));
-        if (raycast.collider != null)
+        if (movement > 0)
         {
-            if (raycast.collider.tag == "Slope")
-            {
-                return Surface.SLOPE;
-            }
-            else if (raycast.collider.tag == "Ground")
-            {
-                return Surface.GROUND;
-            }
+            return Direction.RIGHT;
         }
-        return Surface.NONE;
+        else if (movement < 0)
+        {
+            return Direction.LEFT;
+        }
+        else return null;
     }
 }
