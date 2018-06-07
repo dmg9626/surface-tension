@@ -245,6 +245,7 @@ public class Player : MonoBehaviour
 
         // Check surface below player on both layers
         currentState.surfGround = RayCheck(Direction.DOWN, null, groundRaycastLeniency);
+        Debug.Log(currentState.surfGround);
     }
 
     /// <summary>
@@ -563,7 +564,9 @@ public class Player : MonoBehaviour
         else {
             raycast = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
         }
-              
+
+        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
+
         // Check for collision
         if (raycast.collider != null) {
             return raycast.collider.gameObject;
