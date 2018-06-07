@@ -286,7 +286,7 @@ public class Player : MonoBehaviour
 
         // Check surface below player on both layers
         currentState.surfGround = RayCheck(Direction.DOWN, null, groundRaycastLeniency);
-        Debug.Log(currentState.surfGround);
+        // Debug.Log(currentState.surfGround);
     }
 
     /// <summary>
@@ -652,6 +652,9 @@ public class Player : MonoBehaviour
         // Get gradient values from trail
         Color startColor = trail.startColor;
         Color endColor = trail.endColor;
+
+        Debug.Log("Start color: " + startColor);
+        Debug.Log("End color: " + endColor);
 
         float startAlpha = trail.startAlpha;
         float endAlpha = trail.endAlpha;

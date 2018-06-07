@@ -54,22 +54,22 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public Dictionary<material, materialTrail> colorMapping = new Dictionary<material, materialTrail>() {
         { material.BOUNCE, new materialTrail {
-            startColor = Color.green,
-            endColor = Color.green,
+            startColor = new Color32(141, 249, 77, 255),
+            endColor = new Color32(255, 233, 50, 255),
             startAlpha = 1F,
-            endAlpha = 1f
+            endAlpha = .66F
         } },
         { material.SLIP, new materialTrail {
             startColor = Color.blue,
             endColor = Color.blue,
             startAlpha = 1F,
-            endAlpha = 1f
+            endAlpha = .66F
         } },
         { material.STICK, new materialTrail {
             startColor = Color.yellow,
             endColor = Color.yellow,
             startAlpha = 1F,
-            endAlpha = 1f
+            endAlpha = .66F
         } },
         { material.NONE, new materialTrail {
             startColor = Color.white,
