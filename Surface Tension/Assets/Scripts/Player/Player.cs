@@ -83,6 +83,11 @@ public class Player : MonoBehaviour
     Rigidbody2D pBody;
 
     /// <summary>
+    /// Particle System (child of player)
+    /// </summary>
+    public ParticleSystem pSystem;
+
+    /// <summary>
     /// Definition for direction player is facing
     /// </summary>
     public enum Direction {
@@ -149,6 +154,8 @@ public class Player : MonoBehaviour
 
         // Script Initializations
         respawn = GetComponent<Respawn>();
+
+        pSystem = transform.GetComponentInChildren<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -218,8 +225,8 @@ public class Player : MonoBehaviour
         // Checks jump key
         JumpDown();
 
-        // Update equipped surface based on input
-        EquipSurface();
+        // Update equipped material based on input
+        EquipMaterial();
     }
 
     /// <summary>
@@ -577,20 +584,45 @@ public class Player : MonoBehaviour
     }
 
     //Function to hold surface changing code
-    private void EquipSurface()
+    private void EquipMaterial()
     {
+        // Create Gradient to assign to particle (creates Color Over Time effect)
+        // Gradient gradient = new Gradient();
+        ParticleSystem.MainModule main = pSystem.main;
+
+        // Starting color to be used (ISSUE IS HERE)
+        // Color startColor = pSystem.colorOverLifetime.color.color;
+        // Color endColor = startColor;
+
+        // Start/end alpha values
+        // float startAlpha = 1f;
+        // float endAlpha = 1f;
+        
+        // Change color based on input
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             equippedMaterial = GameController.material.BOUNCE;
+            main.startColor = Color.green;
+            Debug.Log("New startColor: " + Color.green);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             equippedMaterial = GameController.material.SLIP;
+            main.startColor = Color.blue;
+            Debug.Log("New startColor: " + Color.blue);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             equippedMaterial = GameController.material.STICK;
+            main.startColor = Color.yellow;
+            Debug.Log("New startColor: " + Color.yellow);
         }
+
+        // Set properties of gradient
+        // gradient.SetKeys(
+        //     new GradientColorKey[] { new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f) },
+        //     new GradientAlphaKey[] { new GradientAlphaKey(startAlpha, 0.0f), new GradientAlphaKey(endAlpha, 1.0f) }
+        // );
     }
 
     /// <summary>
