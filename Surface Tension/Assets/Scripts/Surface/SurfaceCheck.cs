@@ -29,9 +29,10 @@ public class SurfaceCheck : MonoBehaviour {
         public GameObject objGround; // The game object on the ground
 
         public Vector2 velocity; // Stores the player's velocity at the end of the frame
-
-        public float distToGround;
     };
+
+    public float maxSlideSpeed;
+    public float minSlideSpeed;
 
     private bool initialBounce = true;
 
@@ -62,13 +63,16 @@ public class SurfaceCheck : MonoBehaviour {
 
         GameController.material? groundType = GetMaterial(currentState.objGround);
         GameController.material? prevGroundType = GetMaterial(previousState.objGround);
-        
+
+        float slideSpeed = body.velocity.x;
+
         if (groundType != null && groundType != GameController.material.BOUNCE)
         {
             initialBounce = true;
         }
         
-        if (groundType == GameController.material.BOUNCE && !(prevGroundType == GameController.material.BOUNCE))
+        if (groundType == GameController.material.BOUNCE && !(prevGroundType == GameController.material.BOUNCE) && 
+            Mathf.Abs(body.velocity.y) > 2f)
         {
             float initialBounceBonus = 0;
 
@@ -82,10 +86,24 @@ public class SurfaceCheck : MonoBehaviour {
             body.velocity = new Vector2(previousState.velocity.x, Mathf.Abs(previousState.velocity.y) + .79f + initialBounceBonus);
         }
 
-        if (body.velocity.x > 0 && groundType == GameController.material.SLIP &&
+        if (groundType == GameController.material.SLIP &&
             currentState.playerLeft == null && currentState.playerRight == null)
         {
-            body.velocity = new Vector2(previousState.velocity.x, body.velocity.y);
+            GameController.SurfaceSpeeds surfaceSpeeds = currentState.objGround.GetComponent<SurfaceMaterial>().surfaceSpeeds;
+
+            if (Mathf.Abs(body.velocity.x) > surfaceSpeeds.pushSpeed / 2f)
+            {
+                if (Mathf.Abs(body.velocity.x) < minSlideSpeed)
+                {
+                    slideSpeed = minSlideSpeed;
+                }
+                else if (Mathf.Abs(body.velocity.x) > maxSlideSpeed)
+                {
+                    slideSpeed = maxSlideSpeed;
+                }
+
+                body.velocity = new Vector2(slideSpeed, body.velocity.y);
+            }  
         }
 
         previousState = currentState;
@@ -217,8 +235,6 @@ public class SurfaceCheck : MonoBehaviour {
         {
             raycast = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
         }
-
-        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
 
         // Check for collision
         if (raycast.collider != null)

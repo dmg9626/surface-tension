@@ -65,6 +65,11 @@ public class Player : MonoBehaviour
     private bool maintainVelocity = false;
 
     /// <summary>
+    /// If true, this will be the player's first bounce
+    /// </summary>
+    private bool initialBounce = true;
+
+    /// <summary>
     /// Holds the current state of the player
     /// </summary>
     private State currentState;
@@ -154,16 +159,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        objectAgainstWall = false;
-
         HandleInput();
     }
 
     // Update called at a fixed delta time
     void FixedUpdate () 
 	{
-        objectAgainstWall = false;
-
         // Update data in currentState
         UpdateState();
 
@@ -189,6 +190,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void UpdateState()
     {
+        objectAgainstWall = false;
+
         // Set the player's current surrondings
         SetCurrentSurroundings();
 
@@ -197,6 +200,11 @@ public class Player : MonoBehaviour
 
         // Set player move speeds depending on ground surface
         InitializeSurfaceSpeeds();
+
+        if (GetMaterial(currentState.surfGround) != GameController.material.BOUNCE && currentState.surfGround)
+        {
+            initialBounce = true;
+        }
     }
 
     /// <summary>
@@ -337,10 +345,18 @@ public class Player : MonoBehaviour
             !previousState.surfGround && 
             Mathf.Abs(previousState.velocity.y) > 5f)
         {
+            float initialBounceBonus = 0;
+
+            if (initialBounce)
+            {
+                initialBounceBonus = .3f;
+                initialBounce = false;
+            }
+
             // The .2f is added to account for some inconsistency in the way I set up bounce
             float minBounce = bounceMultiplier * jumpVelocity + .2f;
-            // The 1 added on is temporary, it is there to account for the extra velocity the player travels in between frames
-            float calculatedBounce = Mathf.Sqrt((upGravity * previousState.velocity.y * previousState.velocity.y) / (downGravity)) + 1f;
+            // The 1.35 added on is temporary, it is there to account for the extra velocity the player travels in between frames
+            float calculatedBounce = Mathf.Sqrt((upGravity * previousState.velocity.y * previousState.velocity.y) / (downGravity)) + 1.33f + initialBounceBonus;
 
             if (calculatedBounce < minBounce)
             {
