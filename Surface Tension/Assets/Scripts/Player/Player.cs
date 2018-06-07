@@ -226,7 +226,23 @@ public class Player : MonoBehaviour
         JumpDown();
 
         // Update equipped material based on input
-        EquipMaterial();
+        HandleMaterial();
+    }
+
+    /// <summary>
+    /// Change equipped material based on input
+    /// </summary>
+    private void HandleMaterial()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            EquipMaterial(GameController.material.BOUNCE);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            EquipMaterial(GameController.material.SLIP);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            EquipMaterial(GameController.material.STICK);
+        }
     }
 
     /// <summary>
@@ -583,40 +599,49 @@ public class Player : MonoBehaviour
         }
     }
 
-    //Function to hold surface changing code
-    private void EquipMaterial()
+    /// <summary>
+    /// Eqiups material and changes color of player trail to match
+    /// </summary>
+    /// <param name="material">Material to equip</param>
+    private void EquipMaterial(GameController.material material)
     {
+        // Set equipped material
+        equippedMaterial = material;
+
         // Create Gradient to assign to particle (creates Color Over Time effect)
         // Gradient gradient = new Gradient();
         ParticleSystem.MainModule main = pSystem.main;
 
-        // Starting color to be used (ISSUE IS HERE)
-        // Color startColor = pSystem.colorOverLifetime.color.color;
-        // Color endColor = startColor;
+        // Starting color to be used
+        Color startColor;
+        // Color endColor;
 
         // Start/end alpha values
         // float startAlpha = 1f;
         // float endAlpha = 1f;
+
+        switch(material) {
+            case GameController.material.BOUNCE:
+                startColor = Color.green;
+                break;
+
+            case GameController.material.SLIP:
+                startColor = Color.blue;
+                break;
+
+            case GameController.material.STICK:
+                startColor = Color.yellow;
+                break;
+
+            default:
+                Debug.LogWarning("Color trail not configured for material: " + material);
+                startColor = Color.white;
+                break;
+        }
         
-        // Change color based on input
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            equippedMaterial = GameController.material.BOUNCE;
-            main.startColor = Color.green;
-            Debug.Log("New startColor: " + Color.green);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            equippedMaterial = GameController.material.SLIP;
-            main.startColor = Color.blue;
-            Debug.Log("New startColor: " + Color.blue);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            equippedMaterial = GameController.material.STICK;
-            main.startColor = Color.yellow;
-            Debug.Log("New startColor: " + Color.yellow);
-        }
+        // Set player trail color
+        main.startColor = startColor;
+        Debug.Log("Setting particle trail color: " + main.startColor);
 
         // Set properties of gradient
         // gradient.SetKeys(
