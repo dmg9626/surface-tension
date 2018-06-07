@@ -70,6 +70,12 @@ public class GameController : MonoBehaviour {
             endColor = Color.yellow,
             startAlpha = 1F,
             endAlpha = 1f
+        } },
+        { material.NONE, new materialTrail {
+            startColor = Color.white,
+            endColor = Color.white,
+            startAlpha = 0F,
+            endAlpha = 0f
         } }
     };
 

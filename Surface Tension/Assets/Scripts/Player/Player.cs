@@ -168,6 +168,9 @@ public class Player : MonoBehaviour
         pSystem = transform.GetComponentInChildren<ParticleSystem>();
 
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
+        // Equip starting material
+        EquipMaterial(equippedMaterial);
     }
 
     // Update is called once per frame
