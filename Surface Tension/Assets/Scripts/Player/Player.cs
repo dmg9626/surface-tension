@@ -458,8 +458,8 @@ public class Player : MonoBehaviour
         bool falling1;
         bool falling2;
 
-        jumping = pBody.velocity.y > 1f;
-        falling2 = pBody.velocity.y < -1f;
+        jumping = pBody.velocity.y > 2f;
+        falling2 = pBody.velocity.y < -2f;
         falling1 = (!jumping && !falling2 && !currentState.surfGround);
 
         GetComponent<Animator>().SetInteger("Direction", (int)currentState.direction);
@@ -672,8 +672,6 @@ public class Player : MonoBehaviour
 
         // Assign gradient to module
         colorModule.color = gradient;
-        
-        Debug.Log("Setting particle trail: " + colorModule.color);
     }
 
     /// <summary>
