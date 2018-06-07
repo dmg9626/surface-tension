@@ -95,11 +95,24 @@ public class SurfaceCheck : MonoBehaviour {
             {
                 if (Mathf.Abs(body.velocity.x) < minSlideSpeed)
                 {
-                    slideSpeed = minSlideSpeed;
+                    if (body.velocity.x > 0)
+                    {
+                        slideSpeed = minSlideSpeed;
+                    }else
+                    {
+                        slideSpeed = -minSlideSpeed;
+                    }
                 }
                 else if (Mathf.Abs(body.velocity.x) > maxSlideSpeed)
                 {
-                    slideSpeed = maxSlideSpeed;
+                    if (body.velocity.x > 0)
+                    {
+                        slideSpeed = maxSlideSpeed;
+                    }
+                    else
+                    {
+                        slideSpeed = -maxSlideSpeed;
+                    }
                 }
 
                 body.velocity = new Vector2(slideSpeed, body.velocity.y);
