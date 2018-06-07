@@ -60,10 +60,11 @@ public class GameController : MonoBehaviour {
             endAlpha = .66F
         } },
         { material.SLIP, new materialTrail {
-            startColor = Color.blue,
-            endColor = Color.blue,
+            startColor = new Color32(36, 236, 255, 255),
+            endColor = new Color32(0, 85, 251, 255), // location: 52.6%
+            // Additional color key: 158, 249, 253
             startAlpha = 1F,
-            endAlpha = .66F
+            endAlpha = .83F // restore this value to default when adding additional color key
         } },
         { material.STICK, new materialTrail {
             startColor = Color.yellow,
