@@ -609,45 +609,49 @@ public class Player : MonoBehaviour
         equippedMaterial = material;
 
         // Create Gradient to assign to particle (creates Color Over Time effect)
-        // Gradient gradient = new Gradient();
+        Gradient gradient = new Gradient();
         ParticleSystem.MainModule main = pSystem.main;
 
         // Starting color to be used
         Color startColor;
-        // Color endColor;
+        Color endColor;
 
         // Start/end alpha values
-        // float startAlpha = 1f;
-        // float endAlpha = 1f;
+        float startAlpha = 1f;
+        float endAlpha = .2f;
 
         switch(material) {
             case GameController.material.BOUNCE:
                 startColor = Color.green;
+                endColor = Color.green;
                 break;
 
             case GameController.material.SLIP:
                 startColor = Color.blue;
+                endColor = Color.blue;
                 break;
 
             case GameController.material.STICK:
                 startColor = Color.yellow;
+                endColor = Color.yellow;
                 break;
 
             default:
                 Debug.LogWarning("Color trail not configured for material: " + material);
                 startColor = Color.white;
+                endColor = Color.white;
                 break;
         }
-        
-        // Set player trail color
-        main.startColor = startColor;
-        Debug.Log("Setting particle trail color: " + main.startColor);
-
         // Set properties of gradient
-        // gradient.SetKeys(
-        //     new GradientColorKey[] { new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f) },
-        //     new GradientAlphaKey[] { new GradientAlphaKey(startAlpha, 0.0f), new GradientAlphaKey(endAlpha, 1.0f) }
-        // );
+        gradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(startAlpha, 0.0f), new GradientAlphaKey(endAlpha, 1.0f) }
+        );
+
+        ParticleSystem.ColorOverLifetimeModule colorModule = pSystem.colorOverLifetime;
+        colorModule.color = gradient;
+        
+        Debug.Log("Setting particle trail: " + colorModule.color);
     }
 
     /// <summary>
