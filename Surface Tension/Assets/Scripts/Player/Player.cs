@@ -454,20 +454,21 @@ public class Player : MonoBehaviour
         bool pushing = currentState.action == Action.PUSHING;
         bool pulling = currentState.action == Action.PULLING;
 
-        bool jumping = pBody.velocity.y > 1f;
-        bool falling = pBody.velocity.y < -1f;
-        
-        if (!jumping && !falling && !currentState.surfGround)
-        {
-            jumping = true;
-        }
+        bool jumping;
+        bool falling1;
+        bool falling2;
+
+        jumping = pBody.velocity.y > 1f;
+        falling2 = pBody.velocity.y < -1f;
+        falling1 = (!jumping && !falling2 && !currentState.surfGround);
 
         GetComponent<Animator>().SetInteger("Direction", (int)currentState.direction);
         GetComponent<Animator>().SetBool("Moving", moving);
         GetComponent<Animator>().SetBool("Pushing", pushing);
         GetComponent<Animator>().SetBool("Pulling", pulling);
         GetComponent<Animator>().SetBool("Jumping", jumping);
-        GetComponent<Animator>().SetBool("Falling", falling);
+        GetComponent<Animator>().SetBool("Falling 1", falling1);
+        GetComponent<Animator>().SetBool("Falling 2", falling2);
         
         if(currentState.direction.Equals(Direction.LEFT)) {
             GetComponent<SpriteRenderer>().flipX = true;
