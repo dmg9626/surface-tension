@@ -49,6 +49,43 @@ public class GameController : MonoBehaviour {
         }}
     };
 
+    /// <summary>
+    /// Mapping of materials to player trail color
+    /// </summary>
+    public Dictionary<material, materialTrail> colorMapping = new Dictionary<material, materialTrail>() {
+        { material.BOUNCE, new materialTrail {
+            startColor = Color.green,
+            endColor = Color.green,
+            startAlpha = 1F,
+            endAlpha = 1f
+        } },
+        { material.SLIP, new materialTrail {
+            startColor = Color.blue,
+            endColor = Color.blue,
+            startAlpha = 1F,
+            endAlpha = 1f
+        } },
+        { material.STICK, new materialTrail {
+            startColor = Color.yellow,
+            endColor = Color.yellow,
+            startAlpha = 1F,
+            endAlpha = 1f
+        } }
+    };
+
+    /// <summary>
+    /// Data for creating player trail particle effect for a material
+    /// </summary>
+    public struct materialTrail {
+        public Color startColor;
+        public Color endColor;
+        public float startAlpha;
+        public float endAlpha;
+    }
+
+    /// <summary>
+    /// Data for plaeyr movement speeds on a material
+    /// </summary>
     public struct SurfaceSpeeds {
         public float defaultSpeed;
         public float upSlopeSpeed;

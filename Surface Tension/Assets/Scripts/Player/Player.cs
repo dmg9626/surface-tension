@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour 
 {
+    /// <summary>
+    /// GameController
+    /// </summary>
+    GameController gameController;
+
     public GameController.SurfaceSpeeds surfaceSpeeds;
 
     /// <summary>
@@ -88,6 +93,11 @@ public class Player : MonoBehaviour
     Rigidbody2D pBody;
 
     /// <summary>
+    /// Particle System (child of player)
+    /// </summary>
+    public ParticleSystem pSystem;
+
+    /// <summary>
     /// Definition for direction player is facing
     /// </summary>
     public enum Direction {
@@ -154,6 +164,10 @@ public class Player : MonoBehaviour
 
         // Script Initializations
         respawn = GetComponent<Respawn>();
+
+        pSystem = transform.GetComponentInChildren<ParticleSystem>();
+
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     // Update is called once per frame
@@ -226,8 +240,24 @@ public class Player : MonoBehaviour
         // Checks jump key
         JumpDown();
 
-        // Update equipped surface based on input
-        EquipSurface();
+        // Update equipped material based on input
+        HandleMaterial();
+    }
+
+    /// <summary>
+    /// Change equipped material based on input
+    /// </summary>
+    private void HandleMaterial()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            EquipMaterial(GameController.material.BOUNCE);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            EquipMaterial(GameController.material.SLIP);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            EquipMaterial(GameController.material.STICK);
+        }
     }
 
     /// <summary>
@@ -253,6 +283,7 @@ public class Player : MonoBehaviour
 
         // Check surface below player on both layers
         currentState.surfGround = RayCheck(Direction.DOWN, null, groundRaycastLeniency);
+        Debug.Log(currentState.surfGround);
     }
 
     /// <summary>
@@ -579,7 +610,9 @@ public class Player : MonoBehaviour
         else {
             raycast = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
         }
-              
+
+        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
+
         // Check for collision
         if (raycast.collider != null) {
             return raycast.collider.gameObject;
@@ -589,21 +622,51 @@ public class Player : MonoBehaviour
         }
     }
 
-    //Function to hold surface changing code
-    private void EquipSurface()
+    /// <summary>
+    /// Eqiups material and changes color of player trail to match
+    /// </summary>
+    /// <param name="material">Material to equip</param>
+    private void EquipMaterial(GameController.material material)
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            equippedMaterial = GameController.material.BOUNCE;
+        // Set equipped material
+        equippedMaterial = material;
+
+        
+        // Set trail color
+        SetTrailColor(material);
+    }
+
+    private void SetTrailColor(GameController.material material)
+    {
+        // Return if mapping not found in game controller
+        if(!gameController.colorMapping.ContainsKey(material)) {
+            Debug.LogWarning("No color trail mapping found for material: " + material);
+            return;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            equippedMaterial = GameController.material.SLIP;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            equippedMaterial = GameController.material.STICK;
-        }
+        GameController.materialTrail trail =  gameController.colorMapping[material];
+
+        // Get gradient values from trail
+        Color startColor = trail.startColor;
+        Color endColor = trail.endColor;
+
+        float startAlpha = trail.startAlpha;
+        float endAlpha = trail.endAlpha;
+
+        // Create gradient
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(startAlpha, 0.0f), new GradientAlphaKey(endAlpha, 1.0f) }
+        );
+
+        // Get reference to color over time module (requires stepping through each component)
+        ParticleSystem.MainModule main = pSystem.main;
+        ParticleSystem.ColorOverLifetimeModule colorModule = pSystem.colorOverLifetime;
+
+        // Assign gradient to module
+        colorModule.color = gradient;
+        
+        Debug.Log("Setting particle trail: " + colorModule.color);
     }
 
     /// <summary>
