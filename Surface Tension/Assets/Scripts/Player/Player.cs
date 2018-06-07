@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour 
 {
+    /// <summary>
+    /// GameController
+    /// </summary>
+    GameController gameController;
+
     public GameController.SurfaceSpeeds surfaceSpeeds;
 
     /// <summary>
@@ -156,6 +161,8 @@ public class Player : MonoBehaviour
         respawn = GetComponent<Respawn>();
 
         pSystem = transform.GetComponentInChildren<ParticleSystem>();
+
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     // Update is called once per frame
@@ -608,47 +615,39 @@ public class Player : MonoBehaviour
         // Set equipped material
         equippedMaterial = material;
 
-        // Create Gradient to assign to particle (creates Color Over Time effect)
-        Gradient gradient = new Gradient();
-        ParticleSystem.MainModule main = pSystem.main;
+        
+        // Set trail color
+        SetTrailColor(material);
+    }
 
-        // Starting color to be used
-        Color startColor;
-        Color endColor;
-
-        // Start/end alpha values
-        float startAlpha = 1f;
-        float endAlpha = .2f;
-
-        switch(material) {
-            case GameController.material.BOUNCE:
-                startColor = Color.green;
-                endColor = Color.green;
-                break;
-
-            case GameController.material.SLIP:
-                startColor = Color.blue;
-                endColor = Color.blue;
-                break;
-
-            case GameController.material.STICK:
-                startColor = Color.yellow;
-                endColor = Color.yellow;
-                break;
-
-            default:
-                Debug.LogWarning("Color trail not configured for material: " + material);
-                startColor = Color.white;
-                endColor = Color.white;
-                break;
+    private void SetTrailColor(GameController.material material)
+    {
+        // Return if mapping not found in game controller
+        if(!gameController.colorMapping.ContainsKey(material)) {
+            Debug.LogWarning("No color trail mapping found for material: " + material);
+            return;
         }
-        // Set properties of gradient
+        GameController.materialTrail trail =  gameController.colorMapping[material];
+
+        // Get gradient values from trail
+        Color startColor = trail.startColor;
+        Color endColor = trail.endColor;
+
+        float startAlpha = trail.startAlpha;
+        float endAlpha = trail.endAlpha;
+
+        // Create gradient
+        Gradient gradient = new Gradient();
         gradient.SetKeys(
             new GradientColorKey[] { new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f) },
             new GradientAlphaKey[] { new GradientAlphaKey(startAlpha, 0.0f), new GradientAlphaKey(endAlpha, 1.0f) }
         );
 
+        // Get reference to color over time module (requires stepping through each component)
+        ParticleSystem.MainModule main = pSystem.main;
         ParticleSystem.ColorOverLifetimeModule colorModule = pSystem.colorOverLifetime;
+
+        // Assign gradient to module
         colorModule.color = gradient;
         
         Debug.Log("Setting particle trail: " + colorModule.color);
