@@ -1,21 +1,21 @@
 fileFormatVersion: 2
-guid: 6597658a641c26745921c3deb4017dca
+guid: 1c2d1f1b571dd6549ad0053c682672d9
 TextureImporter:
   fileIDToRecycleName:
-    21300000: ROCKS_0
-    21300002: ROCKS_1
-    21300004: ROCKS_2
-    21300006: ROCKS_3
-    21300008: ROCKS_4
-    21300010: ROCKS_5
-    21300012: ROCKS_6
-    21300014: ROCKS_7
-    21300016: ROCKS_8
-    21300018: ROCKS_9
-    21300020: ROCKS_10
-    21300022: ROCKS_11
-    21300024: ROCKS_12
-    21300026: ROCKS_13
+    21300000: alt_ROCKS_0
+    21300002: alt_ROCKS_1
+    21300004: alt_ROCKS_2
+    21300006: alt_ROCKS_3
+    21300008: alt_ROCKS_4
+    21300010: alt_ROCKS_5
+    21300012: alt_ROCKS_6
+    21300014: alt_ROCKS_7
+    21300016: alt_ROCKS_8
+    21300018: alt_ROCKS_9
+    21300020: alt_ROCKS_10
+    21300022: alt_ROCKS_11
+    21300024: alt_ROCKS_12
+    21300026: alt_ROCKS_13
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -96,7 +96,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ROCKS_0
+      name: alt_ROCKS_0
       rect:
         serializedVersion: 2
         x: 0
@@ -109,18 +109,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -1.1273689, y: -0.39022827}
+        - {x: 0, y: 0}
         - {x: 16, y: 16}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 00fab18fbdcb45446810f56460d0dfed
+      spriteID: ca6d7dead6f979f49bea5068ad0c6892
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_1
+      name: alt_ROCKS_1
       rect:
         serializedVersion: 2
         x: 32
@@ -133,18 +133,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 10.5542145}
-        - {x: 16, y: 10.518967}
+        - {x: -16, y: 11}
+        - {x: 16, y: 11}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: d07b6e9efebad39408fce01a5014cfb7
+      spriteID: 20ac33a812fa918479e572adafdcd4fb
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_2
+      name: alt_ROCKS_2
       rect:
         serializedVersion: 2
         x: 64
@@ -157,18 +157,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 16}
-        - {x: -4.8109055, y: 3.6186829}
+        - {x: -15, y: 15}
+        - {x: -3, y: 3}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: a7bffc0dcc17be6418cdb6cfbf039ec5
+      spriteID: 9d9accbfd2d7a1c4b8123d37cc650407
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_3
+      name: alt_ROCKS_3
       rect:
         serializedVersion: 2
         x: 0
@@ -180,19 +180,19 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -9.401339, y: -16}
-        - {x: -9.974518, y: 16}
+      - - {x: -11, y: -16}
+        - {x: -12, y: 16}
         - {x: 16, y: 16}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: df53216b168d4e2499ca0895adf00b8d
+      spriteID: 84db893e6c2ae474a935b748b58d9ca6
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_4
+      name: alt_ROCKS_4
       rect:
         serializedVersion: 2
         x: 32
@@ -206,13 +206,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bd27bc82f96e16e46a0641278a976d37
+      spriteID: dfb0359d208f2464684acc3e5eb48ae2
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_5
+      name: alt_ROCKS_5
       rect:
         serializedVersion: 2
         x: 64
@@ -226,17 +226,17 @@ TextureImporter:
       physicsShape:
       - - {x: -16, y: -16}
         - {x: -16, y: 16}
-        - {x: 9.327515, y: 16}
-        - {x: 9.709633, y: -16}
+        - {x: 10, y: 16}
+        - {x: 10, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: e201ea94ebdd744439f2b06bfcbf80b5
+      spriteID: 1dc29c58906ab7d42b34f46669bb56f3
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_6
+      name: alt_ROCKS_6
       rect:
         serializedVersion: 2
         x: 0
@@ -249,18 +249,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 10.682892}
-        - {x: 16, y: 10.682892}
+        - {x: -16, y: 11}
+        - {x: 16, y: 11}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 1de499af1a81be9419c8ed91956cb765
+      spriteID: c9959928e10d07f48a88e67e7e89676a
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_7
+      name: alt_ROCKS_7
       rect:
         serializedVersion: 2
         x: 32
@@ -273,18 +273,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 10.491829}
-        - {x: 16, y: 10.491829}
+        - {x: -16, y: 11}
+        - {x: 16, y: 11}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 61d2cc57b470e4849ba8029120346e20
+      spriteID: 077e3470dce1a724780a22d6a4b43956
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_8
+      name: alt_ROCKS_8
       rect:
         serializedVersion: 2
         x: 64
@@ -297,18 +297,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 10.682884}
-        - {x: 16, y: 10.491829}
+        - {x: -16, y: 11}
+        - {x: 16, y: 10}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 030771132ba08cb4d9bbe6c7e588530c
+      spriteID: ab71a4e91b84e584bb455a151aa19046
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_9
+      name: alt_ROCKS_9
       rect:
         serializedVersion: 2
         x: 0
@@ -326,13 +326,13 @@ TextureImporter:
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 0f92e44f5983e934f96801cdfb204979
+      spriteID: 27ff33631c45d904eb7e50788b42a7b5
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_10
+      name: alt_ROCKS_10
       rect:
         serializedVersion: 2
         x: 32
@@ -345,18 +345,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 9}
-        - {x: 16, y: 9}
+        - {x: -16, y: 11}
+        - {x: 16, y: 11}
         - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 0b9887a7b47b7d542981be4152368138
+      spriteID: 5dbb73a459554f24ebccda841b3a1efc
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_11
+      name: alt_ROCKS_11
       rect:
         serializedVersion: 2
         x: 64
@@ -369,18 +369,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -16, y: 9}
-        - {x: 12, y: 9}
-        - {x: 12, y: -16}
+        - {x: -16, y: 11}
+        - {x: 10, y: 11}
+        - {x: 10, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 4604ef11f4313174faafe23e40945964
+      spriteID: 9328b5cc02e59b74f9e220f42590028e
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_12
+      name: alt_ROCKS_12
       rect:
         serializedVersion: 2
         x: 32
@@ -393,18 +393,18 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: -16, y: -16}
-        - {x: -15.321785, y: 10.665039}
-        - {x: 15.35194, y: 10.368675}
-        - {x: 15.35194, y: -16}
+        - {x: -16, y: 11}
+        - {x: 16, y: 11}
+        - {x: 16, y: -16}
       tessellationDetail: 0
       bones: []
-      spriteID: 33d01d922370e1d40a45f3b24a0faa43
+      spriteID: 15889551c4019fd40bb0a916cadf6473
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ROCKS_13
+      name: alt_ROCKS_13
       rect:
         serializedVersion: 2
         x: 32
@@ -418,7 +418,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e6b61643151920942a30098884163f76
+      spriteID: 975a835c19b3ca44890e632785368238
       vertices: []
       indices: 
       edges: []
@@ -426,7 +426,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: e4af58e6b2fafa04e8c17978a656b34e
+    spriteID: a9a600948add6ad458194e6b263e741e
     vertices: []
     indices: 
     edges: []
