@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour {
         } },
         { material.SLIP, new materialTrail {
             startColor = new Color32(36, 236, 255, 255),
-            endColor = new Color32(0, 85, 251, 255), // location: 52.6%
+            endColor = new Color32(0, 41, 255, 255), // location: 52.6%
             // Additional color key: 158, 249, 253
             startAlpha = 1F,
             endAlpha = .83F // restore this value to default when adding additional color key
