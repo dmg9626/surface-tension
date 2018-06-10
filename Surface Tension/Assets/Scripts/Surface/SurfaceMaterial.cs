@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class SurfaceMaterial : MonoBehaviour
 {
@@ -24,28 +25,53 @@ public class SurfaceMaterial : MonoBehaviour
     /// </summary>
     protected Player player;
 
-    //Creates an array to hold the materials that represent the surfaces
-    public Material[] ChosenSurface;
+    /// <summary>
+    /// Bouncy material
+    /// </summary>
+    public Material bounceMaterial;
+
+    /// <summary>
+    /// Slick material
+    /// </summary>
+    public Material slickMaterial;
+
+    /// <summary>
+    /// Sticky material
+    /// </summary>
+    public Material stickyMaterial;
+
+    /// <summary>
+    /// Null material
+    /// </summary>
+    public Material nullMaterial;
 
     void Start()
     {
-        SetSurfaceTiling();
-        InitializeSurfaceSpeeds(type);
+        if(GetComponent<Tilemap>() != null) {
+            Debug.Log(name + ": found tilemap, won't allow material changing on this surface");
+            // changeable = false;
+        }
+        else {
+            ChangeMaterial(type);
+        }
         player = GameObject.FindWithTag("GameController").GetComponent<GameController>().player;
     }
 
     /// <summary>
-    /// Configures material to tile according to quad scale, must be called 
-    /// at the beginning of the scene, but also when a surface material is changed.
+    /// Set tiling parameters on material to work with associated material texture
     /// </summary>
-    void SetTiling()
+    /// <param name="material">Material type</param>
+    void SetMaterialTiling(GameController.material material)
     {
-        GetComponent<Renderer>().material.mainTextureScale = transform.localScale;
-    }
-
-    void SetSurfaceTiling()
-    {
-        GetComponent<Renderer>().material.mainTextureScale = transform.localScale / 3;
+        // Slip material has regular tiling
+        if(material.Equals(GameController.material.SLIP)) {
+            GetComponent<Renderer>().material.mainTextureScale = transform.localScale;
+        }
+        // All other materials are in weird grid form (material texture image should be changed so we don't have to do this)
+        else {
+            GetComponent<Renderer>().material.mainTextureScale = transform.localScale / 3;
+        }
+        
     }
 
     /// <summary>
@@ -66,41 +92,44 @@ public class SurfaceMaterial : MonoBehaviour
             // Left click
             if (Input.GetMouseButton(0))
             {
-                ChangeMaterial();   
+                ChangeMaterial(player.equippedMaterial);   
             }
             // Right click
             else if (Input.GetMouseButton(1))
             {
-                GetComponent<Renderer>().material = ChosenSurface[3];
-                type = GameController.material.NONE;
-                InitializeSurfaceSpeeds(GameController.material.NONE);
-                SetSurfaceTiling();
+                ChangeMaterial(GameController.material.NONE);
             }
         }
     }
 
     /// <summary>
-    /// Changes the appearance of the material (currently just changes color)
+    /// Changes appearance and behavior of material
     /// </summary>
-    void ChangeMaterial()
+    void ChangeMaterial(GameController.material material)
     {
-        switch(player.equippedMaterial)
+        type = material;
+
+        // Change appearance of material
+        switch(material)
         {
             case GameController.material.BOUNCE:
-                GetComponent<Renderer>().material = ChosenSurface[0];
-                SetSurfaceTiling();
+                GetComponent<Renderer>().material = bounceMaterial;
                 break;
             case GameController.material.SLIP:
-                GetComponent<Renderer>().material = ChosenSurface[1];
-                SetTiling();
+                GetComponent<Renderer>().material = slickMaterial;
                 break;
             case GameController.material.STICK:
-                GetComponent<Renderer>().material = ChosenSurface[2];
-                SetSurfaceTiling();
+                GetComponent<Renderer>().material = stickyMaterial;
+                break;
+            case GameController.material.NONE:
+                GetComponent<Renderer>().material = nullMaterial;
                 break;
         }
-        type = player.equippedMaterial;
+        
+        // Set tiling to fit to surface dimensions
+        SetMaterialTiling(material);
 
-        InitializeSurfaceSpeeds(player.equippedMaterial);
+        // Set move speeds
+        InitializeSurfaceSpeeds(material);
     }
 }
