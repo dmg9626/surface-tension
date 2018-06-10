@@ -644,7 +644,6 @@ public class Player : MonoBehaviour
     {
         // Return if mapping not found in game controller
         if(!gameController.colorMapping.ContainsKey(material)) {
-            Debug.LogWarning("No color trail mapping found for material: " + material);
             return;
         }
         GameController.materialTrail trail =  gameController.colorMapping[material];
@@ -652,9 +651,6 @@ public class Player : MonoBehaviour
         // Get gradient values from trail
         Color startColor = trail.startColor;
         Color endColor = trail.endColor;
-
-        Debug.Log("Start color: " + startColor);
-        Debug.Log("End color: " + endColor);
 
         float startAlpha = trail.startAlpha;
         float endAlpha = trail.endAlpha;
