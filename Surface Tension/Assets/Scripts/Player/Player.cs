@@ -87,7 +87,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// The player's currently equipped material
     /// </summary>
-    public GameController.material equippedMaterial;
+    public GameController.materialType equippedMaterial;
 
     //Initializes pBody, this will be the player's Rigidbody2D component 
     Rigidbody2D pBody;
@@ -218,7 +218,7 @@ public class Player : MonoBehaviour
         // Set player move speeds depending on ground surface
         InitializeSurfaceSpeeds();
 
-        if (GetMaterial(currentState.surfGround) != GameController.material.BOUNCE && currentState.surfGround)
+        if (GetMaterial(currentState.surfGround) != GameController.materialType.BOUNCE && currentState.surfGround)
         {
             initialBounce = true;
         }
@@ -253,13 +253,13 @@ public class Player : MonoBehaviour
     private void HandleMaterial()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            EquipMaterial(GameController.material.BOUNCE);
+            EquipMaterial(GameController.materialType.BOUNCE);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            EquipMaterial(GameController.material.SLIP);
+            EquipMaterial(GameController.materialType.SLIP);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            EquipMaterial(GameController.material.STICK);
+            EquipMaterial(GameController.materialType.STICK);
         }
     }
 
@@ -354,11 +354,11 @@ public class Player : MonoBehaviour
             groundSurface = currentState.surfGround.GetComponent<SurfaceMaterial>();
             surfaceSpeeds = groundSurface.surfaceSpeeds;
 
-            if (groundSurface.type == GameController.material.BOUNCE)
+            if (groundSurface.type == GameController.materialType.BOUNCE)
             {
                 maintainVelocity = true;
             }
-            else if (groundSurface.type == GameController.material.NONE)
+            else if (groundSurface.type == GameController.materialType.NONE)
             {
                 maintainVelocity = false;
             }
@@ -375,7 +375,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void BounceCheck()
     {
-        if (GetMaterial(currentState.surfGround) == GameController.material.BOUNCE &&
+        if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE &&
             !previousState.surfGround && 
             Mathf.Abs(previousState.velocity.y) > 5f)
         {
@@ -496,7 +496,7 @@ public class Player : MonoBehaviour
     {
         if (applyMaxUpwards && currentState.surfGround)
         {
-            if (GetMaterial(currentState.surfGround) == GameController.material.BOUNCE)
+            if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE)
             {
                 // If jumping on a bouncy surface, apply the bounce
                 pBody.velocity = new Vector2(pBody.velocity.x, bounceMultiplier * jumpVelocity);
@@ -630,7 +630,7 @@ public class Player : MonoBehaviour
     /// Eqiups material and changes color of player trail to match
     /// </summary>
     /// <param name="material">Material to equip</param>
-    private void EquipMaterial(GameController.material material)
+    private void EquipMaterial(GameController.materialType material)
     {
         // Set equipped material
         equippedMaterial = material;
@@ -640,7 +640,7 @@ public class Player : MonoBehaviour
         SetTrailColor(material);
     }
 
-    private void SetTrailColor(GameController.material material)
+    private void SetTrailColor(GameController.materialType material)
     {
         // Return if mapping not found in game controller
         if(!gameController.colorMapping.ContainsKey(material)) {
@@ -688,7 +688,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Gets the material of a Game Object
     /// </summary>
-    private GameController.material GetMaterial(GameObject gameObject)
+    private GameController.materialType GetMaterial(GameObject gameObject)
     {
         if (gameObject)
         {
@@ -697,7 +697,7 @@ public class Player : MonoBehaviour
                 return gameObject.GetComponent<SurfaceMaterial>().type;
             }
         }
-        return GameController.material.NONE;
+        return GameController.materialType.NONE;
     }
 
     /// <summary>

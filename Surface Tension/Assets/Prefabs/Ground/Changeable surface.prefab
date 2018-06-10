@@ -60,6 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 8d557daa5239d534281167b6c33c1e61, type: 2}
+  - {fileID: 2100000, guid: 8d557daa5239d534281167b6c33c1e61, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -142,10 +143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16d178d4d232a194e9c87907c34dcc0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
   changeable: 1
   type: 0
-  ChosenSurface:
-  - {fileID: 2100000, guid: 810841282dc54a14b97ec85006bfbc79, type: 2}
-  - {fileID: 2100000, guid: 71b3039524c5f4d41b57f28d75e0cd4c, type: 2}
-  - {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720, type: 2}
-  - {fileID: 2100000, guid: 8d557daa5239d534281167b6c33c1e61, type: 2}

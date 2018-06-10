@@ -18,13 +18,13 @@ public class SurfaceGUI : MonoBehaviour {
 	void Update () 
     {
         switch(player.equippedMaterial) {
-            case GameController.material.BOUNCE:
+            case GameController.materialType.BOUNCE:
                 GetComponent<Renderer>().material = ChosenSurface[0];
                 break;
-            case GameController.material.SLIP:
+            case GameController.materialType.SLIP:
                 GetComponent<Renderer>().material = ChosenSurface[1];
                 break;
-            case GameController.material.STICK:
+            case GameController.materialType.STICK:
                 GetComponent<Renderer>().material = ChosenSurface[2];
                 break;
         }

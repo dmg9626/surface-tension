@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class SurfaceMaterial : MonoBehaviour
 {
@@ -10,6 +11,11 @@ public class SurfaceMaterial : MonoBehaviour
     public GameController.SurfaceSpeeds surfaceSpeeds;
 
     /// <summary>
+    /// GameController
+    /// </summary>
+    public GameController gameController;
+
+    /// <summary>
     /// Whether or not the player can change the material of this surface
     /// </summary>
     public bool changeable;
@@ -17,41 +23,50 @@ public class SurfaceMaterial : MonoBehaviour
     /// <summary>
     /// Type of material on this surface
     /// </summary>
-    public GameController.material type;
+    public GameController.materialType type;
 
     /// <summary>
     /// Reference to player
     /// </summary>
     protected Player player;
 
-    //Creates an array to hold the materials that represent the surfaces
-    public Material[] ChosenSurface;
-
     void Start()
     {
-        SetSurfaceTiling();
-        InitializeSurfaceSpeeds(type);
-        player = GameObject.FindWithTag("GameController").GetComponent<GameController>().player;
+        // Find game controller and player
+        gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+        player = gameController.GetComponent<GameController>().player;
+
+        if(GetComponent<Tilemap>() == null) {
+            ChangeMaterial(type);
+        }
+        else {
+            Debug.Log(name + ": found tilemap, won't allow material changing on this surface");
+            InitializeSurfaceSpeeds(type);
+            // changeable = false;
+        }
     }
 
     /// <summary>
-    /// Configures material to tile according to quad scale, must be called 
-    /// at the beginning of the scene, but also when a surface material is changed.
+    /// Set tiling parameters on material to work with associated material texture
     /// </summary>
-    void SetTiling()
+    /// <param name="materialType">Material type</param>
+    /// <param name="material">Material</param>
+    void SetMaterialTiling(GameController.materialType materialType, Material material)
     {
-        GetComponent<Renderer>().material.mainTextureScale = transform.localScale;
-    }
-
-    void SetSurfaceTiling()
-    {
-        GetComponent<Renderer>().material.mainTextureScale = transform.localScale / 3;
+        // Slip material has regular tiling
+        if(materialType.Equals(GameController.materialType.SLIP)) {
+            material.mainTextureScale = transform.localScale;
+        }
+        // All other materials are in weird grid form (material texture image should be changed so we don't have to do this)
+        else {
+            material.mainTextureScale = transform.localScale / 3;
+        }
     }
 
     /// <summary>
     /// Initializes surface with associated move speeds from surfaceSpeeds (called from derived class)
     /// </summary>
-    protected void InitializeSurfaceSpeeds(GameController.material materialType)
+    protected void InitializeSurfaceSpeeds(GameController.materialType materialType)
     {
         // Initialize surface speeds
 		surfaceSpeeds = GameObject.FindWithTag("GameController").GetComponent<GameController>().speedMapping[materialType];
@@ -64,43 +79,64 @@ public class SurfaceMaterial : MonoBehaviour
     {
         if(changeable) {
             // Left click
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
-                ChangeMaterial();   
+                ChangeMaterial(player.equippedMaterial);   
             }
             // Right click
-            else if (Input.GetMouseButton(1))
+            else if (Input.GetMouseButtonDown(1))
             {
-                GetComponent<Renderer>().material = ChosenSurface[3];
-                type = GameController.material.NONE;
-                InitializeSurfaceSpeeds(GameController.material.NONE);
-                SetSurfaceTiling();
+                ChangeMaterial(GameController.materialType.NONE);
+            }
+            if(type != player.equippedMaterial) {
+                PreviewMaterial(player.equippedMaterial);
             }
         }
     }
 
     /// <summary>
-    /// Changes the appearance of the material (currently just changes color)
+    /// Called when the mouse is not any longer over the GUIElement or Collider.
     /// </summary>
-    void ChangeMaterial()
+    void OnMouseExit()
     {
-        switch(player.equippedMaterial)
+        if(changeable)
         {
-            case GameController.material.BOUNCE:
-                GetComponent<Renderer>().material = ChosenSurface[0];
-                SetSurfaceTiling();
-                break;
-            case GameController.material.SLIP:
-                GetComponent<Renderer>().material = ChosenSurface[1];
-                SetTiling();
-                break;
-            case GameController.material.STICK:
-                GetComponent<Renderer>().material = ChosenSurface[2];
-                SetSurfaceTiling();
-                break;
+            // Restore material (sets overlay material to null)
+            PreviewMaterial(GameController.materialType.NONE);
         }
-        type = player.equippedMaterial;
+    }
 
-        InitializeSurfaceSpeeds(player.equippedMaterial);
+    /// <summary>
+    /// Creates transparent preview overlay of equipped material
+    /// </summary>
+    /// <param name="materialType">Material type</param>
+    void PreviewMaterial(GameController.materialType materialType)
+    {
+        // Get preview material
+        Material previewMaterial = gameController.GetMaterial(materialType, true);
+        
+        // Set preview material to 2nd slot in Renderer.materials
+        Material[] materials = GetComponent<Renderer>().materials;
+        materials[1] = previewMaterial;
+        GetComponent<Renderer>().materials = materials;
+    }
+
+    /// <summary>
+    /// Changes appearance and behavior of material
+    /// </summary>
+    /// <param name="materialType">Material type</param>
+    void ChangeMaterial(GameController.materialType materialType)
+    {
+        Debug.Log("Changing material to " + materialType);
+
+        type = materialType;
+
+        GetComponent<Renderer>().material = gameController.GetMaterial(materialType);
+        
+        // Set tiling to fit to surface dimensions
+        SetMaterialTiling(materialType, GetComponent<Renderer>().material);
+
+        // Set move speeds
+        InitializeSurfaceSpeeds(materialType);
     }
 }

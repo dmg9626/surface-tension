@@ -167,7 +167,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1669480340411230}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -6, z: 0}
+  m_LocalPosition: {x: -0.33, y: -6.44, z: 0}
   m_LocalScale: {x: 43.94, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4606516311970634}
@@ -193,7 +193,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1560712991987220}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.27, y: -2.38, z: 0}
+  m_LocalPosition: {x: 8.05, y: -3.45, z: 0}
   m_LocalScale: {x: 0.48, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4606516311970634}
@@ -532,7 +532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a1a34310c3cde40b3bc57d8c642e79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NextLevel: Level 2
+  NextLevel: Level 7
 --- !u!114 &114768408058941600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -545,6 +545,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  bounceMaterial: {fileID: 2100000, guid: 810841282dc54a14b97ec85006bfbc79, type: 2}
+  slickMaterial: {fileID: 2100000, guid: 71b3039524c5f4d41b57f28d75e0cd4c, type: 2}
+  stickyMaterial: {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720, type: 2}
+  nullMaterial: {fileID: 2100000, guid: 8d557daa5239d534281167b6c33c1e61, type: 2}
+  bouncePreviewMaterial: {fileID: 2100000, guid: ccc4a4ed9ec224c32944ec2c55ed5099,
+    type: 2}
+  slickPreviewMaterial: {fileID: 2100000, guid: bea4fbcfdb3934e6abee22ced8628950,
+    type: 2}
+  stickyPreviewMaterial: {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720,
+    type: 2}
 --- !u!124 &124020483699882100
 Behaviour:
   m_ObjectHideFlags: 1
