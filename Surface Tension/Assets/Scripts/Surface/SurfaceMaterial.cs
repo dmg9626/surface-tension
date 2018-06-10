@@ -41,6 +41,7 @@ public class SurfaceMaterial : MonoBehaviour
         }
         else {
             Debug.Log(name + ": found tilemap, won't allow material changing on this surface");
+            InitializeSurfaceSpeeds(type);
             // changeable = false;
         }
     }
