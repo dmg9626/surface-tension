@@ -11,7 +11,7 @@ public class SlickSurface : SurfaceMaterial {
 	void OnAwake()
 	{
 		// Declare type and initialize with movement speeds
-		type = GameController.material.SLIP;
+		type = GameController.materialType.SLIP;
 		// InitializeSurfaceSpeeds(type);
 	}
 }
