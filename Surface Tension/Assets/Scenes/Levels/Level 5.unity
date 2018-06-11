@@ -156,6 +156,11 @@ Prefab:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 114206033879707088, guid: 3411fe3093a12e1409be49293242fb7c,
+        type: 2}
+      propertyPath: bounceTime
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3411fe3093a12e1409be49293242fb7c, type: 2}
   m_IsPrefabParent: 0
@@ -585,14 +590,13 @@ Prefab:
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_TileSpriteArray.Array.data[2].m_RefCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_TileSpriteArray.Array.data[2].m_Data
       value: 
-      objectReference: {fileID: 21300034, guid: 94b88d0ac7245a64a888613e0ae0bec2,
-        type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_Tiles.Array.data[8].first.x
@@ -846,7 +850,7 @@ Prefab:
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_Tiles.Array.data[14].second.m_TileSpriteIndex
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
@@ -1541,13 +1545,14 @@ Prefab:
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_TileSpriteArray.Array.data[4].m_RefCount
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_TileSpriteArray.Array.data[4].m_Data
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 21300034, guid: 94b88d0ac7245a64a888613e0ae0bec2,
+        type: 3}
     - target: {fileID: 8195094279533890478, guid: 87fbb32086788c249b790c75f989c68f,
         type: 2}
       propertyPath: m_Tiles.Array.data[32].first.x

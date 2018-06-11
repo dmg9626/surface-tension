@@ -5,20 +5,32 @@ using UnityEngine.SceneManagement;
 
 public class Respawn : MonoBehaviour {
 
-    public void HandleRespawn()
+    GameObject[] objects;
+    Dictionary<GameObject, Vector2> blockPositions = new Dictionary<GameObject, Vector2>();
+    Dictionary<GameObject, Quaternion> blockRotations = new Dictionary<GameObject, Quaternion>();
+
+	void Start ()
     {
-        if (Input.GetButtonDown("Restart"))
+        objects = GameObject.FindGameObjectsWithTag("Object");
+
+        foreach (GameObject block in objects)
+        {
+            blockPositions.Add(block, block.transform.position);
+            blockRotations.Add(block, block.transform.rotation);
+        }
+	}
+	
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-    }
-
-    //When the player attached with this script is met with a killbox, the scene resets
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Kill Box")
+        else if (other.CompareTag("Object"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            other.gameObject.transform.position = blockPositions[other.gameObject];
+            other.gameObject.transform.rotation = blockRotations[other.gameObject];
+            other.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
         }
     }
 }

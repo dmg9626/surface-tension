@@ -176,9 +176,30 @@ Prefab:
       propertyPath: NextLevel
       value: Level 5
       objectReference: {fileID: 0}
+    - target: {fileID: 61186994821640828, guid: 4b5d81b5fff51a24b8acd9264472b348,
+        type: 2}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4b5d81b5fff51a24b8acd9264472b348, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &497239163 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1669480340411230, guid: 4b5d81b5fff51a24b8acd9264472b348,
+    type: 2}
+  m_PrefabInternal: {fileID: 425725269}
+--- !u!114 &497239164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 497239163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13636e3336c418743a3ca166ba0f6270, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &664168631
 Prefab:
   m_ObjectHideFlags: 0

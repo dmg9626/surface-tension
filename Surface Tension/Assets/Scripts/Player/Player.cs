@@ -29,6 +29,11 @@ public class Player : MonoBehaviour
     public float bounceMultiplier;
 
     /// <summary>
+    /// The multiplier that is applied to the jumpVelocity when the player is on a bouncy surface
+    /// </summary>
+    public float horrizontalBounceMultiplier;
+
+    /// <summary>
     /// The gravity scale that affects the player when their rigidbody's y velocity is greater than 0
     /// </summary>
     public float upGravity;
@@ -73,6 +78,21 @@ public class Player : MonoBehaviour
     /// If true, this will be the player's first bounce
     /// </summary>
     private bool initialBounce = true;
+
+    /// <summary>
+    /// If true, the player is currently bouncing horrizontally
+    /// </summary>
+    private bool bouncingHorrizontal = false;
+
+    /// <summary>
+    /// Time before player input when bouncing
+    /// </summary>
+    public float bounceTime;
+
+    /// <summary>
+    /// Counter counting down until the player can input again
+    /// </summary>
+    private float bounceCounter;
 
     /// <summary>
     /// Holds the current state of the player
@@ -155,7 +175,7 @@ public class Player : MonoBehaviour
     /// </summary>
     protected bool moving;
 
-    private Respawn respawn;
+    private Restart restart;
 
     void Start()
     {
@@ -163,7 +183,7 @@ public class Player : MonoBehaviour
         pBody = GetComponent<Rigidbody2D>();
 
         // Script Initializations
-        respawn = GetComponent<Respawn>();
+        restart = GetComponent<Restart>();
 
         pSystem = transform.GetComponentInChildren<ParticleSystem>();
 
@@ -198,8 +218,72 @@ public class Player : MonoBehaviour
         // Check if stuck 
         IsStuck();
 
+        // Counts down counters
+        TickCounters();
+
         currentState.velocity = pBody.velocity;
         previousState = currentState;
+    }
+
+    /// <summary>
+    /// Handle player input
+    /// </summary>
+    private void HandleInput()
+    {
+        // Check if player pressed Restart button
+        restart.HandleRestart();
+
+        // Get player input (horizontal)
+        horizontalInput = Input.GetAxis("Horizontal");
+        if (Mathf.Abs(horizontalInput) > 0f)
+        {
+            currentState.direction = GetDirection(horizontalInput) ?? previousState.direction;
+            currentState.oppDirection = GetDirection(-1 * horizontalInput) ?? previousState.oppDirection;
+        }
+        else
+        {
+            currentState.direction = GetDirection(pBody.velocity.x) ?? previousState.direction;
+            currentState.oppDirection = GetDirection(-1 * pBody.velocity.x) ?? previousState.oppDirection;
+        }
+
+        // Grab object
+        grabbing = Input.GetButton("Grab");
+
+        // Checks jump key
+        JumpDown();
+
+        // Update equipped material based on input
+        HandleMaterial();
+    }
+
+    /// <summary>
+    /// Sets when the player presses the jump key and when they release it
+    /// </summary>
+    private void JumpDown()
+    {
+        if (Input.GetButtonDown("Jump") && currentState.surfGround)
+        {
+            applyMaxUpwards = true;
+        }
+    }
+
+    /// <summary>
+    /// Change equipped material based on input
+    /// </summary>
+    private void HandleMaterial()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            EquipMaterial(GameController.materialType.BOUNCE);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            EquipMaterial(GameController.materialType.SLIP);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            EquipMaterial(GameController.materialType.STICK);
+        }
     }
 
     /// <summary>
@@ -225,54 +309,16 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Handle player input
-    /// </summary>
-    private void HandleInput()
-    {
-        // Check if player pressed Respawn button
-        respawn.HandleRespawn();
-
-        // Get player input (horizontal)
-        horizontalInput = Input.GetAxis("Horizontal");
-        currentState.direction = GetDirection(horizontalInput) ?? previousState.direction;
-        currentState.oppDirection = GetDirection(-1 * horizontalInput) ?? previousState.oppDirection;
-
-        // Grab object
-        grabbing = Input.GetButton("Grab");
-
-        // Checks jump key
-        JumpDown();
-
-        // Update equipped material based on input
-        HandleMaterial();
-    }
-
-    /// <summary>
-    /// Change equipped material based on input
-    /// </summary>
-    private void HandleMaterial()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            EquipMaterial(GameController.materialType.BOUNCE);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            EquipMaterial(GameController.materialType.SLIP);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            EquipMaterial(GameController.materialType.STICK);
-        }
-    }
-
-    /// <summary>
     /// Performs raycasts to check surfaces player is contacting, and stores those GameObjects in currentState
     /// </summary>
     private void SetCurrentSurroundings()
     {
         float appliedGrabLeniency = 0;
-        float normalLeniency = .05f;    
+        float normalLeniency = .05f;
 
         // If the player is currently holding the grab button, apply leniency to the object cast check
-        if (grabbing) {
+        if (grabbing)
+        {
             appliedGrabLeniency = grabRaycastLeniency;
         }
 
@@ -286,7 +332,6 @@ public class Player : MonoBehaviour
 
         // Check surface below player on both layers
         currentState.surfGround = RayCheck(Direction.DOWN, null, groundRaycastLeniency);
-        // Debug.Log(currentState.surfGround);
     }
 
     /// <summary>
@@ -311,13 +356,13 @@ public class Player : MonoBehaviour
             {
                 currentState.action = Action.NORMAL;
             }
-             
+
         }
         // Pulling
         else if (currentState.objOppDir && (GetTag(currentState.surfGround) == "Ground") && grabbing && horizontalInput != 0)
         {
             currentState.action = Action.PULLING;
-            
+
             // Get pulled object
             currentState.grabbedObject = currentState.objOppDir;
         }
@@ -352,16 +397,16 @@ public class Player : MonoBehaviour
                 objectAgainstWall = currentState.grabbedObject.GetComponent<SurfaceCheck>().touchingRightWall;
             }
         }
-
     }
-    
+
     /// <summary>
     /// If grounded on a surface, assign its surfaceSpeeds to the player movement speeds
     /// </summary>
     private void InitializeSurfaceSpeeds()
     {
         SurfaceMaterial groundSurface;
-        if (currentState.surfGround != null) {
+        if (currentState.surfGround != null)
+        {
             groundSurface = currentState.surfGround.GetComponent<SurfaceMaterial>();
             surfaceSpeeds = groundSurface.surfaceSpeeds;
 
@@ -378,37 +423,6 @@ public class Player : MonoBehaviour
             currentState.pushSpeed = surfaceSpeeds.pushSpeed;
             currentState.pullSpeed = surfaceSpeeds.pullSpeed;
             currentState.slopeSpeed = surfaceSpeeds.upSlopeSpeed;
-        }
-    }
-
-    /// <summary>
-    /// Trigger a bounce if player lands on bouncy surface
-    /// </summary>
-    private void BounceCheck()
-    {
-        if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE &&
-            !previousState.surfGround && 
-            Mathf.Abs(previousState.velocity.y) > 7.75f) // Checks the player fell from a height of greater than 1 unit
-        {
-            float initialBounceBonus = 0;
-
-            if (initialBounce)
-            {
-                initialBounceBonus = .3f;
-                initialBounce = false;
-            }
-
-            // The .2f is added to account for some inconsistency in the way I set up bounce
-            float minBounce = bounceMultiplier * jumpVelocity + .2f;
-            // The 1.35 added on is temporary, it is there to account for the extra velocity the player travels in between frames
-            float calculatedBounce = Mathf.Sqrt((upGravity * previousState.velocity.y * previousState.velocity.y) / (downGravity)) + 1.33f + initialBounceBonus;
-
-            if (calculatedBounce < minBounce)
-            {
-                calculatedBounce = minBounce;
-            }
-
-            pBody.velocity = new Vector2(pBody.velocity.x, calculatedBounce);
         }
     }
 
@@ -432,7 +446,7 @@ public class Player : MonoBehaviour
             case Action.PULLING:
                 distAway = horizontalInput * currentState.pullSpeed * Time.fixedDeltaTime;
                 moveSpeed = currentState.pullSpeed;
-                if(!currentState.surfFaceDir && !currentState.objFaceDir)
+                if (!currentState.surfFaceDir && !currentState.objFaceDir)
                 {
                     Vector3 grabbedObjectPosition = currentState.grabbedObject.transform.position;
                     currentState.grabbedObject.transform.position = new Vector3(grabbedObjectPosition.x + distAway, grabbedObjectPosition.y, 0);
@@ -455,7 +469,11 @@ public class Player : MonoBehaviour
         {
             maintainVelocity = false;
         }
-        pBody.velocity = new Vector2(horizontalInput * moveSpeed, pBody.velocity.y);
+
+        if (!bouncingHorrizontal)
+        {
+            pBody.velocity = new Vector2(horizontalInput * moveSpeed, pBody.velocity.y);
+        }
     }
 
     /// <summary>
@@ -482,23 +500,64 @@ public class Player : MonoBehaviour
         GetComponent<Animator>().SetBool("Jumping", jumping);
         GetComponent<Animator>().SetBool("Falling 1", falling1);
         GetComponent<Animator>().SetBool("Falling 2", falling2);
-        
-        if(currentState.direction.Equals(Direction.LEFT)) {
+
+        if (currentState.direction.Equals(Direction.LEFT))
+        {
             GetComponent<SpriteRenderer>().flipX = true;
         }
-        else if(currentState.direction.Equals(Direction.RIGHT)) {
+        else if (currentState.direction.Equals(Direction.RIGHT))
+        {
             GetComponent<SpriteRenderer>().flipX = false;
         }
     }
 
     /// <summary>
-    /// Sets when the player presses the jump key and when they release it
+    /// Trigger a bounce if player lands on bouncy surface
     /// </summary>
-    private void JumpDown()
+    private void BounceCheck()
     {
-        if (Input.GetButtonDown("Jump") && currentState.surfGround)
+        if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE &&
+            !previousState.surfGround &&
+            Mathf.Abs(previousState.velocity.y) > 7.725f) // Checks the player fell from a height of greater than 1 unit
         {
-            applyMaxUpwards = true;
+            float initialBounceBonus = 0;
+
+            if (initialBounce)
+            {
+                initialBounceBonus = .3f;
+                initialBounce = false;
+            }
+
+            // The .2f is added to account for some inconsistency in the way I set up bounce
+            float minBounce = bounceMultiplier * jumpVelocity + .2f;
+            // The 1.35 added on is temporary, it is there to account for the extra velocity the player travels in between frames
+            float calculatedBounce = Mathf.Sqrt((upGravity * previousState.velocity.y * previousState.velocity.y) / (downGravity)) + 1.33f + initialBounceBonus;
+
+            if (calculatedBounce < minBounce)
+            {
+                calculatedBounce = minBounce;
+            }
+
+            pBody.velocity = new Vector2(pBody.velocity.x, calculatedBounce);
+        }
+        else if (GetMaterial(currentState.surfFaceDir) == GameController.materialType.BOUNCE && !currentState.surfGround)
+        {
+
+            float additionalYVelocity = 0;
+
+            if (pBody.velocity.y > 0f)
+            {
+                additionalYVelocity = 3f;
+            }
+
+            if ((currentState.direction == Direction.RIGHT && previousState.velocity.x > 3f) ||
+                (currentState.direction == Direction.LEFT && previousState.velocity.x < -3f))
+            {
+                pBody.velocity = new Vector2(-1 * previousState.velocity.x * horrizontalBounceMultiplier, pBody.velocity.y + additionalYVelocity);
+                bouncingHorrizontal = true;
+                maintainVelocity = true;
+                bounceCounter = bounceTime;
+            }
         }
     }
 
@@ -539,8 +598,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    
-
     /// <summary>
     /// If player is stuck above ground, applies the jump velocity downwards to dislodge player
     /// </summary>
@@ -549,6 +606,19 @@ public class Player : MonoBehaviour
         if ((currentState.surfFaceDir || currentState.objFaceDir) && (currentState.surfOppDir || currentState.objOppDir) && Mathf.Abs(pBody.velocity.y) <= .1f && !currentState.surfGround)
         {
             pBody.velocity =  -1 * Vector2.up * 8;
+        }
+    }
+
+    private void TickCounters()
+    {
+        if (bouncingHorrizontal)
+        {
+            bounceCounter = bounceCounter - 1;
+            if (bounceCounter <= 0 || (currentState.surfGround && !(currentState.surfFaceDir || currentState.surfOppDir)))
+            {
+                bounceCounter = bounceTime;
+                bouncingHorrizontal = false;
+            }
         }
     }
 
@@ -727,3 +797,5 @@ public class Player : MonoBehaviour
         else return null;
     }
 }
+
+
