@@ -27,6 +27,7 @@ public class SurfaceCheck : MonoBehaviour {
         public GameObject objLeft; // The object opposite the side the player is facing
         public GameObject playerLeft; // The object the player is facing
         public GameObject objGround; // The game object on the ground
+        public GameObject objTop; // The game object above the block
 
         public Vector2 velocity; // Stores the player's velocity at the end of the frame
     };
@@ -42,8 +43,8 @@ public class SurfaceCheck : MonoBehaviour {
     [HideInInspector]
     public bool touchingRightWall = false;
 
-    private State currentState;
-    private State previousState;
+    public State currentState;
+    public State previousState;
 
     private Rigidbody2D body;
  
@@ -61,17 +62,17 @@ public class SurfaceCheck : MonoBehaviour {
         touchingLeftWall = ObjectExists(currentState.objLeft);
         touchingRightWall = ObjectExists(currentState.objRight);
 
-        GameController.materialType? groundType = GetMaterial(currentState.objGround);
-        GameController.materialType? prevGroundType = GetMaterial(previousState.objGround);
+        GameController.material? groundType = GetMaterial(currentState.objGround);
+        GameController.material? prevGroundType = GetMaterial(previousState.objGround);
 
         float slideSpeed = body.velocity.x;
 
-        if (groundType != null && groundType != GameController.materialType.BOUNCE)
+        if (groundType != null && groundType != GameController.material.BOUNCE)
         {
             initialBounce = true;
         }
         
-        if (groundType == GameController.materialType.BOUNCE && !(prevGroundType == GameController.materialType.BOUNCE) && 
+        if (groundType == GameController.material.BOUNCE && !(prevGroundType == GameController.material.BOUNCE) && 
             Mathf.Abs(body.velocity.y) > 2f)
         {
             float initialBounceBonus = 0;
@@ -86,7 +87,7 @@ public class SurfaceCheck : MonoBehaviour {
             body.velocity = new Vector2(previousState.velocity.x, Mathf.Abs(previousState.velocity.y) + .79f + initialBounceBonus);
         }
 
-        if (groundType == GameController.materialType.SLIP &&
+        if (groundType == GameController.material.SLIP &&
             currentState.playerLeft == null && currentState.playerRight == null)
         {
             GameController.SurfaceSpeeds surfaceSpeeds = currentState.objGround.GetComponent<SurfaceMaterial>().surfaceSpeeds;
@@ -154,7 +155,7 @@ public class SurfaceCheck : MonoBehaviour {
         }
     }
 
-    private GameController.materialType? GetMaterial(GameObject gameObject)
+    private GameController.material? GetMaterial(GameObject gameObject)
     {
         if (gameObject)
         {

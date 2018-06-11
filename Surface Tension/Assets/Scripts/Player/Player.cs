@@ -87,7 +87,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// The player's currently equipped material
     /// </summary>
-    public GameController.materialType equippedMaterial;
+    public GameController.material equippedMaterial;
 
     //Initializes pBody, this will be the player's Rigidbody2D component 
     Rigidbody2D pBody;
@@ -218,7 +218,7 @@ public class Player : MonoBehaviour
         // Set player move speeds depending on ground surface
         InitializeSurfaceSpeeds();
 
-        if (GetMaterial(currentState.surfGround) != GameController.materialType.BOUNCE && currentState.surfGround)
+        if (GetMaterial(currentState.surfGround) != GameController.material.BOUNCE && currentState.surfGround)
         {
             initialBounce = true;
         }
@@ -253,13 +253,13 @@ public class Player : MonoBehaviour
     private void HandleMaterial()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            EquipMaterial(GameController.materialType.BOUNCE);
+            EquipMaterial(GameController.material.BOUNCE);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            EquipMaterial(GameController.materialType.SLIP);
+            EquipMaterial(GameController.material.SLIP);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            EquipMaterial(GameController.materialType.STICK);
+            EquipMaterial(GameController.material.STICK);
         }
     }
 
@@ -297,10 +297,21 @@ public class Player : MonoBehaviour
         // Pushing
         if (currentState.objFaceDir && (GetTag(currentState.surfGround) == "Slope" || GetTag(currentState.surfGround) == "Ground") && grabbing && horizontalInput != 0)
         {
-            currentState.action = Action.PUSHING;
-            
             // Get pushed object
-            currentState.grabbedObject = currentState.objFaceDir; 
+            currentState.grabbedObject = currentState.objFaceDir;
+
+            GameObject grabbedObjectGround = currentState.grabbedObject.GetComponent<SurfaceCheck>().currentState.objGround;
+
+            // Ensures grabbedobject is grounded, else revert to normal action
+            if (grabbedObjectGround)
+            {
+                currentState.action = Action.PUSHING;
+            }
+            else
+            {
+                currentState.action = Action.NORMAL;
+            }
+             
         }
         // Pulling
         else if (currentState.objOppDir && (GetTag(currentState.surfGround) == "Ground") && grabbing && horizontalInput != 0)
@@ -350,15 +361,15 @@ public class Player : MonoBehaviour
     private void InitializeSurfaceSpeeds()
     {
         SurfaceMaterial groundSurface;
-        if (currentState.surfGround != null && LayerMask.LayerToName(currentState.surfGround.layer) == "Ground") {
+        if (currentState.surfGround != null) {
             groundSurface = currentState.surfGround.GetComponent<SurfaceMaterial>();
             surfaceSpeeds = groundSurface.surfaceSpeeds;
 
-            if (groundSurface.type == GameController.materialType.BOUNCE)
+            if (groundSurface.type == GameController.material.BOUNCE)
             {
                 maintainVelocity = true;
             }
-            else if (groundSurface.type == GameController.materialType.NONE)
+            else if (groundSurface.type == GameController.material.NONE)
             {
                 maintainVelocity = false;
             }
@@ -375,9 +386,9 @@ public class Player : MonoBehaviour
     /// </summary>
     private void BounceCheck()
     {
-        if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE &&
+        if (GetMaterial(currentState.surfGround) == GameController.material.BOUNCE &&
             !previousState.surfGround && 
-            Mathf.Abs(previousState.velocity.y) > 5f)
+            Mathf.Abs(previousState.velocity.y) > 7.75f) // Checks the player fell from a height of greater than 1 unit
         {
             float initialBounceBonus = 0;
 
@@ -423,7 +434,8 @@ public class Player : MonoBehaviour
                 moveSpeed = currentState.pullSpeed;
                 if(!currentState.surfFaceDir && !currentState.objFaceDir)
                 {
-                    currentState.grabbedObject.transform.Translate(distAway, 0, 0);
+                    Vector3 grabbedObjectPosition = currentState.grabbedObject.transform.position;
+                    currentState.grabbedObject.transform.position = new Vector3(grabbedObjectPosition.x + distAway, grabbedObjectPosition.y, 0);
                 }
                 break;
             case Action.UPSLOPE:
@@ -434,7 +446,8 @@ public class Player : MonoBehaviour
                 break;
         }
         // If we are maintaining velocity...
-        if (Mathf.Abs(moveSpeed) < Mathf.Abs(previousState.velocity.x) && maintainVelocity)
+        if ((Mathf.Abs(moveSpeed) < Mathf.Abs(previousState.velocity.x)) && maintainVelocity &&
+            (currentState.action) == Action.NORMAL || ((currentState.action) == Action.AGAINSTWALL && currentState.action != previousState.action))
         {
             moveSpeed = Mathf.Abs(previousState.velocity.x);
         }
@@ -496,7 +509,7 @@ public class Player : MonoBehaviour
     {
         if (applyMaxUpwards && currentState.surfGround)
         {
-            if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE)
+            if (GetMaterial(currentState.surfGround) == GameController.material.BOUNCE)
             {
                 // If jumping on a bouncy surface, apply the bounce
                 pBody.velocity = new Vector2(pBody.velocity.x, bounceMultiplier * jumpVelocity);
@@ -630,7 +643,7 @@ public class Player : MonoBehaviour
     /// Eqiups material and changes color of player trail to match
     /// </summary>
     /// <param name="material">Material to equip</param>
-    private void EquipMaterial(GameController.materialType material)
+    private void EquipMaterial(GameController.material material)
     {
         // Set equipped material
         equippedMaterial = material;
@@ -640,7 +653,7 @@ public class Player : MonoBehaviour
         SetTrailColor(material);
     }
 
-    private void SetTrailColor(GameController.materialType material)
+    private void SetTrailColor(GameController.material material)
     {
         // Return if mapping not found in game controller
         if(!gameController.colorMapping.ContainsKey(material)) {
@@ -688,7 +701,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Gets the material of a Game Object
     /// </summary>
-    private GameController.materialType GetMaterial(GameObject gameObject)
+    private GameController.material GetMaterial(GameObject gameObject)
     {
         if (gameObject)
         {
@@ -697,7 +710,7 @@ public class Player : MonoBehaviour
                 return gameObject.GetComponent<SurfaceMaterial>().type;
             }
         }
-        return GameController.materialType.NONE;
+        return GameController.material.NONE;
     }
 
     /// <summary>

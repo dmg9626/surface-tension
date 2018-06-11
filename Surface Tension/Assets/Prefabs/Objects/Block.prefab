@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 61754023883523074}
   - component: {fileID: 114223344388657150}
   - component: {fileID: 212654604220933216}
+  - component: {fileID: 114989097716390764}
   m_Layer: 10
   m_Name: Block
   m_TagString: Object
@@ -103,6 +104,20 @@ MonoBehaviour:
   minSlideSpeed: 6
   touchingLeftWall: 0
   touchingRightWall: 0
+--- !u!114 &114989097716390764
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1278674270192682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16d178d4d232a194e9c87907c34dcc0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  changeable: 0
+  type: 0
+  ChosenSurface: []
 --- !u!212 &212654604220933216
 SpriteRenderer:
   m_ObjectHideFlags: 1
