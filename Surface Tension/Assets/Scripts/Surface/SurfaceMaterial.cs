@@ -38,6 +38,7 @@ public class SurfaceMaterial : MonoBehaviour
 
         if(GetComponent<Tilemap>() == null) {
             ChangeMaterial(type);
+            GetComponent<Renderer>().materials[1] = null;
         }
         else {
             Debug.Log(name + ": found tilemap, won't allow material changing on this surface");
@@ -119,6 +120,8 @@ public class SurfaceMaterial : MonoBehaviour
         Material[] materials = GetComponent<Renderer>().materials;
         materials[1] = previewMaterial;
         GetComponent<Renderer>().materials = materials;
+
+        SetMaterialTiling(materialType, GetComponent<Renderer>().materials[1]);
     }
 
     /// <summary>
