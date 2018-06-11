@@ -62,17 +62,17 @@ public class SurfaceCheck : MonoBehaviour {
         touchingLeftWall = ObjectExists(currentState.objLeft);
         touchingRightWall = ObjectExists(currentState.objRight);
 
-        GameController.material? groundType = GetMaterial(currentState.objGround);
-        GameController.material? prevGroundType = GetMaterial(previousState.objGround);
+        GameController.materialType? groundType = GetMaterial(currentState.objGround);
+        GameController.materialType? prevGroundType = GetMaterial(previousState.objGround);
 
         float slideSpeed = body.velocity.x;
 
-        if (groundType != null && groundType != GameController.material.BOUNCE)
+        if (groundType != null && groundType != GameController.materialType.BOUNCE)
         {
             initialBounce = true;
         }
         
-        if (groundType == GameController.material.BOUNCE && !(prevGroundType == GameController.material.BOUNCE) && 
+        if (groundType == GameController.materialType.BOUNCE && !(prevGroundType == GameController.materialType.BOUNCE) && 
             Mathf.Abs(body.velocity.y) > 2f)
         {
             float initialBounceBonus = 0;
@@ -87,7 +87,7 @@ public class SurfaceCheck : MonoBehaviour {
             body.velocity = new Vector2(previousState.velocity.x, Mathf.Abs(previousState.velocity.y) + .79f + initialBounceBonus);
         }
 
-        if (groundType == GameController.material.SLIP &&
+        if (groundType == GameController.materialType.SLIP &&
             currentState.playerLeft == null && currentState.playerRight == null)
         {
             GameController.SurfaceSpeeds surfaceSpeeds = currentState.objGround.GetComponent<SurfaceMaterial>().surfaceSpeeds;
@@ -155,7 +155,7 @@ public class SurfaceCheck : MonoBehaviour {
         }
     }
 
-    private GameController.material? GetMaterial(GameObject gameObject)
+    private GameController.materialType? GetMaterial(GameObject gameObject)
     {
         if (gameObject)
         {
