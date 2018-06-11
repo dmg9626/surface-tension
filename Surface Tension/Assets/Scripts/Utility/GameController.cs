@@ -146,6 +146,11 @@ public class GameController : MonoBehaviour {
     public Material stickyPreviewMaterial;
 
     /// <summary>
+    /// Selection highlight material
+    /// </summary>
+    public Material highlightMaterial;
+
+    /// <summary>
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
