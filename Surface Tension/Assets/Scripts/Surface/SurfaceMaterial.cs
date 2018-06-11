@@ -36,8 +36,9 @@ public class SurfaceMaterial : MonoBehaviour
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
         player = gameController.GetComponent<GameController>().player;
 
-        if(GetComponent<Tilemap>() == null) {
+        if(GetComponent<Tilemap>() == null && tag == "Ground") {
             ChangeMaterial(type);
+            Debug.Log(name + " setting second material null");
             GetComponent<Renderer>().materials[1] = null;
         }
         else {
