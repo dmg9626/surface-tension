@@ -91,7 +91,9 @@ public class SurfaceMaterial : MonoBehaviour
                 ChangeMaterial(GameController.materialType.NONE);
             }
             if(type != player.equippedMaterial) {
-                PreviewMaterial(player.equippedMaterial);
+                // PreviewMaterial(gameController.GetMaterial(player.equippedMaterial, true));
+                // SetMaterialTiling(GameController.materialType.NONE, GetComponent<Renderer>().materials[1]);
+                PreviewMaterial(gameController.highlightMaterial);
             }
         }
     }
@@ -103,8 +105,9 @@ public class SurfaceMaterial : MonoBehaviour
     {
         if(changeable)
         {
+            Debug.Log("Removing material preview");
             // Restore material (sets overlay material to null)
-            PreviewMaterial(GameController.materialType.NONE);
+            PreviewMaterial(gameController.GetMaterial(GameController.materialType.NONE, true));
         }
     }
 
@@ -112,17 +115,17 @@ public class SurfaceMaterial : MonoBehaviour
     /// Creates transparent preview overlay of equipped material
     /// </summary>
     /// <param name="materialType">Material type</param>
-    void PreviewMaterial(GameController.materialType materialType)
+    void PreviewMaterial(Material previewMaterial)
     {
         // Get preview material
-        Material previewMaterial = gameController.GetMaterial(materialType, true);
+        // Material previewMaterial = gameController.GetMaterial(materialType, true);
         
         // Set preview material to 2nd slot in Renderer.materials
         Material[] materials = GetComponent<Renderer>().materials;
         materials[1] = previewMaterial;
         GetComponent<Renderer>().materials = materials;
 
-        SetMaterialTiling(materialType, GetComponent<Renderer>().materials[1]);
+        // SetMaterialTiling(GameController.materialType.NONE, GetComponent<Renderer>().materials[1]);
     }
 
     /// <summary>
