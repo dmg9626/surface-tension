@@ -175,7 +175,7 @@ public class Player : MonoBehaviour
     /// </summary>
     protected bool moving;
 
-    private Respawn respawn;
+    private Restart restart;
 
     void Start()
     {
@@ -183,7 +183,7 @@ public class Player : MonoBehaviour
         pBody = GetComponent<Rigidbody2D>();
 
         // Script Initializations
-        respawn = GetComponent<Respawn>();
+        restart = GetComponent<Restart>();
 
         pSystem = transform.GetComponentInChildren<ParticleSystem>();
 
@@ -230,8 +230,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void HandleInput()
     {
-        // Check if player pressed Respawn button
-        respawn.HandleRespawn();
+        // Check if player pressed Restart button
+        restart.HandleRestart();
 
         // Get player input (horizontal)
         horizontalInput = Input.GetAxis("Horizontal");
