@@ -549,9 +549,9 @@ MonoBehaviour:
   slickMaterial: {fileID: 2100000, guid: 71b3039524c5f4d41b57f28d75e0cd4c, type: 2}
   stickyMaterial: {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720, type: 2}
   nullMaterial: {fileID: 2100000, guid: 8d557daa5239d534281167b6c33c1e61, type: 2}
-  bouncePreviewMaterial: {fileID: 2100000, guid: ccc4a4ed9ec224c32944ec2c55ed5099,
+  bouncePreviewMaterial: {fileID: 2100000, guid: fd4b20733dd0c49f0a0c70cbb3dabaae,
     type: 2}
-  slickPreviewMaterial: {fileID: 2100000, guid: bea4fbcfdb3934e6abee22ced8628950,
+  slickPreviewMaterial: {fileID: 2100000, guid: 7fe937c187c744683b08e538ff51ad3e,
     type: 2}
   stickyPreviewMaterial: {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720,
     type: 2}

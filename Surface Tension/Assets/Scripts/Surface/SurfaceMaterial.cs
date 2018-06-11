@@ -91,9 +91,12 @@ public class SurfaceMaterial : MonoBehaviour
                 ChangeMaterial(GameController.materialType.NONE);
             }
             if(type != player.equippedMaterial) {
-                // PreviewMaterial(gameController.GetMaterial(player.equippedMaterial, true));
-                // SetMaterialTiling(GameController.materialType.NONE, GetComponent<Renderer>().materials[1]);
-                PreviewMaterial(gameController.highlightMaterial);
+
+                // Overlay highlight material on surface
+                PreviewMaterial(gameController.GetMaterial(player.equippedMaterial, true));
+
+                // Set texture tiling to 1, 1 to handle wonky highlight texture
+                GetComponent<Renderer>().materials[1].mainTextureScale = new Vector2(1,1);
             }
         }
     }
@@ -108,6 +111,7 @@ public class SurfaceMaterial : MonoBehaviour
             Debug.Log("Removing material preview");
             // Restore material (sets overlay material to null)
             PreviewMaterial(gameController.GetMaterial(GameController.materialType.NONE, true));
+            SetMaterialTiling(GameController.materialType.SLIP, GetComponent<Renderer>().materials[1]);
         }
     }
 
