@@ -38,13 +38,10 @@ public class SurfaceMaterial : MonoBehaviour
 
         if(GetComponent<Tilemap>() == null && tag == "Ground") {
             ChangeMaterial(type);
-            Debug.Log(name + " setting second material null");
             GetComponent<Renderer>().materials[1] = null;
         }
         else {
-            Debug.Log(name + ": found tilemap, won't allow material changing on this surface");
             InitializeSurfaceSpeeds(type);
-            // changeable = false;
         }
     }
 
@@ -131,8 +128,6 @@ public class SurfaceMaterial : MonoBehaviour
     /// <param name="materialType">Material type</param>
     void ChangeMaterial(GameController.materialType materialType)
     {
-        Debug.Log("Changing material to " + materialType);
-
         type = materialType;
 
         GetComponent<Renderer>().material = gameController.GetMaterial(materialType);
