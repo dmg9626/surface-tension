@@ -542,6 +542,7 @@ public class Player : MonoBehaviour
     {
         if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE &&
             !previousState.surfGround &&
+            ((GetMaterial(currentState.surfFaceDir) != GameController.materialType.BOUNCE) || (Mathf.Abs(previousState.velocity.y) < 1f)) &&
             Mathf.Abs(previousState.velocity.y) > 7.725f) // Checks the player fell from a height of greater than 1 unit
         {
             float initialBounceBonus = 0;
@@ -564,7 +565,8 @@ public class Player : MonoBehaviour
 
             pBody.velocity = new Vector2(pBody.velocity.x, calculatedBounce);
         }
-        else if (GetMaterial(currentState.surfFaceDir) == GameController.materialType.BOUNCE && !currentState.surfGround)
+        else if ((GetMaterial(currentState.surfFaceDir) == GameController.materialType.BOUNCE && 
+            !currentState.surfGround))
         {
 
             float additionalYVelocity = 0;
@@ -572,12 +574,20 @@ public class Player : MonoBehaviour
             // Min value to add additionalYVelocity
             if (pBody.velocity.y >= -1f)
             {
-                additionalYVelocity = 3f;
+                if (pBody.velocity.y < 5f)
+                {
+                    additionalYVelocity = 3f;
+                }
+                else
+                {
+                    additionalYVelocity = 8f - pBody.velocity.y;
+                }
             }
 
             // Min speed to bounce horizontally
-            if ((currentState.direction == Direction.RIGHT && previousState.velocity.x > 3f) ||
-                (currentState.direction == Direction.LEFT && previousState.velocity.x < -3f))
+            if (((currentState.direction == Direction.RIGHT && previousState.velocity.x > 3f)) ||
+                (currentState.direction == Direction.LEFT && previousState.velocity.x < -3f) ||
+                bounceCounter < 0)
             {
                 float bounceXVelocity = -1 * previousState.velocity.x * horizontalBounceMultiplier;
                 float bounceYVelocity = pBody.velocity.y + additionalYVelocity;
@@ -668,7 +678,7 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-            if (currentState.surfGround && !(currentState.surfFaceDir || currentState.surfOppDir))
+            if (currentState.surfGround)
             {
                 bounceCounter = bounceTime;
                 bouncingHorizontal = false;
@@ -684,15 +694,18 @@ public class Player : MonoBehaviour
 
         if (Mathf.Abs(velocityX) > maxXVelocity)
         {
+            Debug.Log("Too Fast X");
             velocityX = maxXVelocity * Mathf.Sign(velocityX);
         }
 
         if (velocityY > maxYVelocityUp)
         {
+            Debug.Log("Too Fast Up");
             velocityY = maxYVelocityUp;
         }
         else if (velocityY < maxYVelocityDown)
         {
+            Debug.Log("Too Fast Down");
             velocityY = maxYVelocityDown;
         }
 
@@ -745,7 +758,7 @@ public class Player : MonoBehaviour
         else {
             // Calculate bottom of player (don't need leniency here):
             // Bottom of BoxCollider
-            playerBottom = collider.bounds.min.y - (collider.edgeRadius / 2f);
+            playerBottom = collider.bounds.min.y + collider.size.y / 2;
 
             // Calculate distance to left edge of player:
             // Half the collider + the radius + leniency
@@ -762,7 +775,7 @@ public class Player : MonoBehaviour
             rayDirection = Vector2.up;
 
             // Distance = height + edge radius
-            rayDistance = collider.bounds.size.y + collider.edgeRadius;
+            rayDistance = collider.bounds.size.y / 2;
         }
 
         // Calculate raycast origin
