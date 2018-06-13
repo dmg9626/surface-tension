@@ -64,6 +64,20 @@ public class SurfaceCheck : MonoBehaviour {
 
         GameController.materialType? groundType = GetMaterial(currentState.objGround);
         GameController.materialType? prevGroundType = GetMaterial(previousState.objGround);
+        GameController.materialType? wallType = null;
+
+        if (currentState.direction == Direction.LEFT)
+        {
+            if (currentState.objLeft)
+            {
+                wallType = GetMaterial(currentState.objLeft);
+            }
+        }
+        else
+        {
+            wallType = GetMaterial(currentState.objRight);
+        }
+
 
         float slideSpeed = body.velocity.x;
 
@@ -72,7 +86,11 @@ public class SurfaceCheck : MonoBehaviour {
             initialBounce = true;
         }
         
-        if (groundType == GameController.materialType.BOUNCE && !(prevGroundType == GameController.materialType.BOUNCE) && 
+        if (wallType == GameController.materialType.BOUNCE && Mathf.Abs(previousState.velocity.x) >= 0)
+        {
+            body.velocity = new Vector2(-maxSlideSpeed * Mathf.Sign(previousState.velocity.x), previousState.velocity.y);
+        }
+        else if (groundType == GameController.materialType.BOUNCE && !(prevGroundType == GameController.materialType.BOUNCE) && 
             Mathf.Abs(body.velocity.y) > 2f)
         {
             float initialBounceBonus = 0;
@@ -86,8 +104,7 @@ public class SurfaceCheck : MonoBehaviour {
             // .79 because guestimation said so 
             body.velocity = new Vector2(previousState.velocity.x, Mathf.Abs(previousState.velocity.y) + .79f + initialBounceBonus);
         }
-
-        if (groundType == GameController.materialType.SLIP &&
+        else if (groundType == GameController.materialType.SLIP &&
             currentState.playerLeft == null && currentState.playerRight == null)
         {
             GameController.SurfaceSpeeds surfaceSpeeds = currentState.objGround.GetComponent<SurfaceMaterial>().surfaceSpeeds;
@@ -215,7 +232,7 @@ public class SurfaceCheck : MonoBehaviour {
         {
             // Calculate bottom of player (don't need leniency here):
             // Bottom of BoxCollider
-            playerBottom = collider.bounds.min.y - (collider.edgeRadius / 2f);
+            playerBottom = collider.bounds.min.y + collider.bounds.size.y / 4;
 
             // Calculate distance to left edge of player:
             // Half the collider + the radius + leniency
@@ -234,7 +251,7 @@ public class SurfaceCheck : MonoBehaviour {
             rayDirection = Vector2.up;
 
             // Distance = height + edge radius
-            rayDistance = collider.bounds.size.y + collider.edgeRadius;
+            rayDistance = collider.bounds.size.y / 2;
         }
 
         // Raycast origin
