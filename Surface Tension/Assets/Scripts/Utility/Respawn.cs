@@ -31,6 +31,7 @@ public class Respawn : MonoBehaviour {
             other.gameObject.transform.position = blockPositions[other.gameObject];
             other.gameObject.transform.rotation = blockRotations[other.gameObject];
             other.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+            other.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
         }
     }
 }
