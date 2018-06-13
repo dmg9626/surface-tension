@@ -4469,6 +4469,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114206033879707088, guid: 3411fe3093a12e1409be49293242fb7c,
+        type: 2}
+      propertyPath: maxYVelocityUp
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114206033879707088, guid: 3411fe3093a12e1409be49293242fb7c,
+        type: 2}
+      propertyPath: maxYVelocityDown
+      value: -20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3411fe3093a12e1409be49293242fb7c, type: 2}
   m_IsPrefabParent: 0

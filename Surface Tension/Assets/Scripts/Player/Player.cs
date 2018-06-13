@@ -14,6 +14,21 @@ public class Player : MonoBehaviour
     public GameController.SurfaceSpeeds surfaceSpeeds;
 
     /// <summary>
+    /// The maximum speed the player can reach in the X direction
+    /// </summary>
+    public float maxXVelocity;
+
+    /// <summary>
+    /// The maximum speed the player can reach in the Y direction
+    /// </summary>
+    public float maxYVelocityUp;
+
+    /// <summary>
+    /// The maximum speed the player can reach in the Y direction
+    /// </summary>
+    public float maxYVelocityDown;
+
+    /// <summary>
     /// The horizontal input from the player every frame
     /// </summary>
     float horizontalInput;
@@ -31,7 +46,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// The multiplier that is applied to the jumpVelocity when the player is on a bouncy surface
     /// </summary>
-    public float horrizontalBounceMultiplier;
+    public float horizontalBounceMultiplier;
 
     /// <summary>
     /// The gravity scale that affects the player when their rigidbody's y velocity is greater than 0
@@ -80,9 +95,9 @@ public class Player : MonoBehaviour
     private bool initialBounce = true;
 
     /// <summary>
-    /// If true, the player is currently bouncing horrizontally
+    /// If true, the player is currently bouncing horizontally
     /// </summary>
-    private bool bouncingHorrizontal = false;
+    private bool bouncingHorizontal = false;
 
     /// <summary>
     /// Time before player input when bouncing
@@ -221,6 +236,10 @@ public class Player : MonoBehaviour
         // Counts down counters
         TickCounters();
 
+
+        // Makes sure the player is not going to be moving faster then the max velocity
+        TameVelocity();
+        
         currentState.velocity = pBody.velocity;
         previousState = currentState;
     }
@@ -475,7 +494,7 @@ public class Player : MonoBehaviour
             maintainVelocity = false;
         }
 
-        if (!bouncingHorrizontal)
+        if (!bouncingHorizontal)
         {
             pBody.velocity = new Vector2(horizontalInput * moveSpeed, pBody.velocity.y);
         }
@@ -550,21 +569,26 @@ public class Player : MonoBehaviour
 
             float additionalYVelocity = 0;
 
-            if (pBody.velocity.y > 0f)
+            // Min value to add additionalYVelocity
+            if (pBody.velocity.y >= -1f)
             {
                 additionalYVelocity = 3f;
             }
 
+            // Min speed to bounce horizontally
             if ((currentState.direction == Direction.RIGHT && previousState.velocity.x > 3f) ||
                 (currentState.direction == Direction.LEFT && previousState.velocity.x < -3f))
             {
-                float bounceXVelocity = -1 * previousState.velocity.x;
-                float bounceYVelocity = pBody.velocity.y;
+                float bounceXVelocity = -1 * previousState.velocity.x * horizontalBounceMultiplier;
+                float bounceYVelocity = pBody.velocity.y + additionalYVelocity;
 
+                if(bounceYVelocity < -1f)
+                {
+                    bounceYVelocity = 0f;
+                }
 
-
-                pBody.velocity = new Vector2(-1 * previousState.velocity.x * horrizontalBounceMultiplier, pBody.velocity.y + additionalYVelocity);
-                bouncingHorrizontal = true;
+                pBody.velocity = new Vector2(bounceXVelocity, bounceYVelocity);
+                bouncingHorizontal = true;
                 maintainVelocity = true;
                 bounceCounter = bounceTime;
             }
@@ -619,23 +643,61 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Ticks all counters (just bouncingHorizontal for now)
     private void TickCounters()
     {
-        if (bouncingHorrizontal)
+        if (bouncingHorizontal)
         {
             bounceCounter = bounceCounter - 1;
-            if (bounceCounter < bounceTime / 2)
+            if (bounceCounter < 0)
             {
                 if ((Mathf.Abs(horizontalInput) > 0) && (Mathf.Sign(horizontalInput) != Mathf.Sign(pBody.velocity.x))){
-                    
+                   if (pBody.velocity.x > 0)
+                    {
+                        pBody.velocity = new Vector2(pBody.velocity.x - .2f, pBody.velocity.y);
+                    }
+                   else
+                    {
+                        pBody.velocity = new Vector2(pBody.velocity.x + .2f, pBody.velocity.y);
+                    }
+
+                   if (Mathf.Abs(pBody.velocity.x) < 1)
+                    {
+                        bounceCounter = bounceTime;
+                        bouncingHorizontal = false;
+                    }
                 }
             }
-            if (bounceCounter <= 0 || (currentState.surfGround && !(currentState.surfFaceDir || currentState.surfOppDir)))
+            if (currentState.surfGround && !(currentState.surfFaceDir || currentState.surfOppDir))
             {
                 bounceCounter = bounceTime;
-                bouncingHorrizontal = false;
+                bouncingHorizontal = false;
             }
         }
+    }
+
+    // Ensures the player's velocity will not be over the maximum velocity
+    private void TameVelocity()
+    {
+        float velocityX = pBody.velocity.x;
+        float velocityY = pBody.velocity.y;
+
+        if (Mathf.Abs(velocityX) > maxXVelocity)
+        {
+            velocityX = maxXVelocity * Mathf.Sign(velocityX);
+        }
+
+        if (velocityY > maxYVelocityUp)
+        {
+            velocityY = maxYVelocityUp;
+        }
+        else if (velocityY < maxYVelocityDown)
+        {
+            velocityY = maxYVelocityDown;
+        }
+
+        pBody.velocity = new Vector2(velocityX, velocityY);
+
     }
 
     /// <summary>
