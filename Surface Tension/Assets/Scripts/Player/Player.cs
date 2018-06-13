@@ -240,11 +240,16 @@ public class Player : MonoBehaviour
             currentState.direction = GetDirection(horizontalInput) ?? previousState.direction;
             currentState.oppDirection = GetDirection(-1 * horizontalInput) ?? previousState.oppDirection;
         }
-        else
+        else if (Mathf.Abs(pBody.velocity.x) > 1f)
         {
             currentState.direction = GetDirection(pBody.velocity.x) ?? previousState.direction;
             currentState.oppDirection = GetDirection(-1 * pBody.velocity.x) ?? previousState.oppDirection;
         }
+        else
+        {
+            currentState.direction = previousState.direction;
+            currentState.oppDirection = previousState.oppDirection;
+        } 
 
         // Grab object
         grabbing = Input.GetButton("Grab");
@@ -553,6 +558,11 @@ public class Player : MonoBehaviour
             if ((currentState.direction == Direction.RIGHT && previousState.velocity.x > 3f) ||
                 (currentState.direction == Direction.LEFT && previousState.velocity.x < -3f))
             {
+                float bounceXVelocity = -1 * previousState.velocity.x;
+                float bounceYVelocity = pBody.velocity.y;
+
+
+
                 pBody.velocity = new Vector2(-1 * previousState.velocity.x * horrizontalBounceMultiplier, pBody.velocity.y + additionalYVelocity);
                 bouncingHorrizontal = true;
                 maintainVelocity = true;
@@ -614,6 +624,12 @@ public class Player : MonoBehaviour
         if (bouncingHorrizontal)
         {
             bounceCounter = bounceCounter - 1;
+            if (bounceCounter < bounceTime / 2)
+            {
+                if ((Mathf.Abs(horizontalInput) > 0) && (Mathf.Sign(horizontalInput) != Mathf.Sign(pBody.velocity.x))){
+                    
+                }
+            }
             if (bounceCounter <= 0 || (currentState.surfGround && !(currentState.surfFaceDir || currentState.surfOppDir)))
             {
                 bounceCounter = bounceTime;

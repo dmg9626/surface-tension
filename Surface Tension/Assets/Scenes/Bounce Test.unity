@@ -164,7 +164,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4695790191059944, guid: 0ad5ddb4bde54624398ac8b70214751b, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 3.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4695790191059944, guid: 0ad5ddb4bde54624398ac8b70214751b, type: 2}
       propertyPath: m_LocalPosition.y
@@ -727,6 +727,7 @@ MonoBehaviour:
     type: 2}
   stickyPreviewMaterial: {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720,
     type: 2}
+  highlightMaterial: {fileID: 0}
 --- !u!1001 &1321655391
 Prefab:
   m_ObjectHideFlags: 0

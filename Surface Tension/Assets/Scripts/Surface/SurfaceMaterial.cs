@@ -105,7 +105,6 @@ public class SurfaceMaterial : MonoBehaviour
     {
         if(changeable)
         {
-            Debug.Log("Removing material preview");
             // Restore material (sets overlay material to null)
             PreviewMaterial(gameController.GetMaterial(GameController.materialType.NONE, true));
             SetMaterialTiling(GameController.materialType.SLIP, GetComponent<Renderer>().materials[1]);
