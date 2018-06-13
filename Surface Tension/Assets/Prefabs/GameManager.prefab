@@ -556,7 +556,6 @@ MonoBehaviour:
     type: 2}
   stickyPreviewMaterial: {fileID: 2100000, guid: 1b0a6b295d7df6643aa44b8f5f0bb720,
     type: 2}
-  highlightMaterial: {fileID: 0}
 --- !u!114 &114859622176745104
 MonoBehaviour:
   m_ObjectHideFlags: 1
