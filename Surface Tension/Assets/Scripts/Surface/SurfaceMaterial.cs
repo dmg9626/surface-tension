@@ -37,8 +37,11 @@ public class SurfaceMaterial : MonoBehaviour
         player = gameController.GetComponent<GameController>().player;
 
         if(GetComponent<Tilemap>() == null && tag == "Ground") {
-            ChangeMaterial(type);
-            GetComponent<Renderer>().materials[1] = null;
+            ChangeSurface(type);
+
+            // stupid hacky way to keep renderer from displaying a Default Standard Material in the preview material slot (renderer.materials[1])
+            // standard materials aren't included in the preloaded shaders in Project Settings > Graphics, so this is my best workaround here
+            PreviewMaterial(gameController.GetMaterial(GameController.materialType.STICK));
         }
         else {
             InitializeSurfaceSpeeds(type);
@@ -80,12 +83,12 @@ public class SurfaceMaterial : MonoBehaviour
             // Left click
             if (Input.GetMouseButtonDown(0))
             {
-                ChangeMaterial(player.equippedMaterial);   
+                ChangeSurface(player.equippedMaterial);   
             }
             // Right click
             else if (Input.GetMouseButtonDown(1))
             {
-                ChangeMaterial(GameController.materialType.NONE);
+                ChangeSurface(GameController.materialType.NONE);
             }
             if(type != player.equippedMaterial) {
 
@@ -106,7 +109,10 @@ public class SurfaceMaterial : MonoBehaviour
         if(changeable)
         {
             // Restore material (sets overlay material to null)
-            PreviewMaterial(gameController.GetMaterial(GameController.materialType.NONE, true));
+            PreviewMaterial(gameController.GetMaterial(GameController.materialType.STICK, true));
+
+            Material[] materials = GetComponent<Renderer>().materials;
+
             SetMaterialTiling(GameController.materialType.SLIP, GetComponent<Renderer>().materials[1]);
         }
     }
@@ -117,26 +123,44 @@ public class SurfaceMaterial : MonoBehaviour
     /// <param name="materialType">Material type</param>
     void PreviewMaterial(Material previewMaterial)
     {
-        // Get preview material
-        // Material previewMaterial = gameController.GetMaterial(materialType, true);
-        
         // Set preview material to 2nd slot in Renderer.materials
         Material[] materials = GetComponent<Renderer>().materials;
-        materials[1] = previewMaterial;
+        if(previewMaterial == null) {
+            Debug.Log("Setting preview material alpha = 0");
+            Color color = materials[1].color;
+            color.a = 0f;
+        }
+        else {
+            materials[1] = previewMaterial;
+        }
+        
         GetComponent<Renderer>().materials = materials;
 
         // SetMaterialTiling(GameController.materialType.NONE, GetComponent<Renderer>().materials[1]);
     }
 
     /// <summary>
-    /// Changes appearance and behavior of material
+    /// Changes material being displayed on renderer
+    /// </summary>
+    /// <param name="material"></param>
+    void ChangeMaterial(Material material)
+    {
+        Material[] materials = GetComponent<Renderer>().materials;
+        materials[0] = material;
+        GetComponent<Renderer>().materials = materials;
+    }
+
+    /// <summary>
+    /// Changes appearance and behavior of surface to match given material type
     /// </summary>
     /// <param name="materialType">Material type</param>
-    void ChangeMaterial(GameController.materialType materialType)
+    void ChangeSurface(GameController.materialType materialType)
     {
+        // Set material type
         type = materialType;
 
-        GetComponent<Renderer>().material = gameController.GetMaterial(materialType);
+        // Set material on renderer
+        ChangeMaterial(gameController.GetMaterial(materialType));
         
         // Set tiling to fit to surface dimensions
         SetMaterialTiling(materialType, GetComponent<Renderer>().material);
