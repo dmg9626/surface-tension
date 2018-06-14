@@ -135,7 +135,7 @@ public class AudioController : MonoBehaviour
 		// Get random sound effect (if others found with same soundType)
 		AudioClip clip = GetRandomSoundEffect(soundType);
 
-		audioSource.PlayOneShot(clip);
+		audioSource.Play();
 	}
 
 	/// <summary>
