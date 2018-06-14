@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class Player : MonoBehaviour 
@@ -892,7 +893,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonDown("Quit"))
         {
-            Application.Quit();
+            SceneManager.LoadScene("Level 0");
         }
     }
 }
