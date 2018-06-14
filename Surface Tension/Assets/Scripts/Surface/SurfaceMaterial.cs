@@ -81,14 +81,20 @@ public class SurfaceMaterial : MonoBehaviour
     {
         if(changeable) {
             // Left click
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && type != player.equippedMaterial)
             {
-                ChangeSurface(player.equippedMaterial);   
+                ChangeSurface(player.equippedMaterial);
+
+                // Play material change sound effect
+                gameController.audioController.PlaySoundEffect(AudioController.SoundType.MATERIAL_CHANGE);
             }
             // Right click
-            else if (Input.GetMouseButtonDown(1))
+            else if (Input.GetMouseButtonDown(1) && type != GameController.materialType.NONE)
             {
                 ChangeSurface(GameController.materialType.NONE);
+
+                // Play material change sound effect
+                gameController.audioController.PlaySoundEffect(AudioController.SoundType.MATERIAL_CHANGE);
             }
             if(type != player.equippedMaterial) {
 
