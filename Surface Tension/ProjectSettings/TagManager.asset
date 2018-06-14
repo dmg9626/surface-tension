@@ -9,6 +9,7 @@ TagManager:
   - Slope
   - Kill Box
   - Goal
+  - AudioController
   layers:
   - Default
   - TransparentFX
