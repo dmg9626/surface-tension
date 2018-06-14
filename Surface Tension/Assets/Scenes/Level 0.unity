@@ -5999,6 +5999,11 @@ Prefab:
       propertyPath: m_Color.b
       value: 0.8301887
       objectReference: {fileID: 0}
+    - target: {fileID: 114310717725654302, guid: 5adfe484569c3d145a3009cf07305c2d,
+        type: 2}
+      propertyPath: m_CancelButton
+      value: Quit
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5adfe484569c3d145a3009cf07305c2d, type: 2}
   m_IsPrefabParent: 0
