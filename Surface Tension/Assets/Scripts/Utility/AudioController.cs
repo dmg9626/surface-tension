@@ -14,7 +14,6 @@ public class AudioController : MonoBehaviour
 
 	public enum SoundEffectType {
 		BOUNCE,
-		SLICK,
 		JUMP,
 		MATERIAL_CHANGE,
 		MUSIC
@@ -59,14 +58,6 @@ public class AudioController : MonoBehaviour
 		// Make sure AudioController isn't destroyed on scene change
 		DontDestroyOnLoad(gameObject);
 
-		// Initialize list of sound effects
-		// TODO: reevaluate whether we actualy need this
-		soundEffects = new Dictionary<SoundEffectType, AudioClip> {
-			{ SoundEffectType.JUMP, jumpEffect },
-			{ SoundEffectType.MATERIAL_CHANGE, materialChange },
-			{ SoundEffectType.MUSIC, music }
-		};
-
 		// Initialize list of Audio objects
 		audioList = new List<Audio> {
 			new Audio {
@@ -109,7 +100,10 @@ public class AudioController : MonoBehaviour
 		// Create audio source for associated audio clip
 		foreach(Audio audio in audioList) {
 			InitializeAudioSource(audio);
+			Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
 		}
+
+		PlaySoundEffect(SoundEffectType.MUSIC);
 	}
 
 	/// <summary>
@@ -130,6 +124,10 @@ public class AudioController : MonoBehaviour
 		audioSource.loop = audio.looping;
 		audioSource.playOnAwake = audio.playonAwake;
 
+		// Give audio a reference to its audiosource
+		audio.audioSource = audioSource;
+
+		Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
 		Debug.Log("Created AudioSource " + audioSource.name + " for clip " + audio.audioClip.name);
 	}
 
@@ -148,7 +146,7 @@ public class AudioController : MonoBehaviour
 		List<Audio> audios = audioList.FindAll(a => a.type == soundEffectType);
 		Audio audio;
 
-		// If more than one matching audio comes back, choose one at random
+		// If more than one matching audio comes back,gi choose one at random
 		if(audios.Count > 1) {
 			int rand = UnityEngine.Random.Range(0, audios.Count);
 			audio = audios[rand];
@@ -156,7 +154,13 @@ public class AudioController : MonoBehaviour
 		else {
 			audio = audios[0];
 		}
+		// Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
 
+		// audio.audioSource.Play();
 
+		AudioSource audioSource = transform.Find(audio.audioClip.name).GetComponent<AudioSource>();
+		Debug.Log(audio.type + " audio source is null: " + (audioSource == null).ToString());
+
+		audioSource.Play();
 	}
 }
