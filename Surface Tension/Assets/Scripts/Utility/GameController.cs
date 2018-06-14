@@ -154,6 +154,8 @@ public class GameController : MonoBehaviour {
     /// </summary>
     void Awake()
     {
+        Application.targetFrameRate = 60;
+
         // Initialize material mapping
         materialMapping = new Dictionary<materialType, Material>() {
             {  materialType.BOUNCE, bounceMaterial },
