@@ -6069,16 +6069,16 @@ Prefab:
       objectReference: {fileID: 1052332593}
     - target: {fileID: 4387738415235006, guid: 4b5d81b5fff51a24b8acd9264472b348, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -8.58
+      value: 8.5
       objectReference: {fileID: 0}
     - target: {fileID: 4387738415235006, guid: 4b5d81b5fff51a24b8acd9264472b348, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.48
+      value: 1.55
       objectReference: {fileID: 0}
     - target: {fileID: 114521735563449644, guid: 4b5d81b5fff51a24b8acd9264472b348,
         type: 2}
       propertyPath: NextLevel
-      value: Level 7.2
+      value: Level 11
       objectReference: {fileID: 0}
     - target: {fileID: 1509315162829382, guid: 4b5d81b5fff51a24b8acd9264472b348, type: 2}
       propertyPath: m_IsActive
