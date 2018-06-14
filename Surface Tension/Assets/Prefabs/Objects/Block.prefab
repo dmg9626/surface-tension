@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e6c69ec90e48f4d9174c366ec69aef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSlideSpeed: 8
+  maxSlideSpeed: 6
   minSlideSpeed: 6
   touchingLeftWall: 0
   touchingRightWall: 0
