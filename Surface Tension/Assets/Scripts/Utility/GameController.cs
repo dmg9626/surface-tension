@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -169,7 +170,22 @@ public class GameController : MonoBehaviour {
             {  materialType.NONE, null }
         };
 
-        audioController = GameObject.FindGameObjectWithTag("AudioController").GetComponent<AudioController>();
+        
+        FindAudioController();
+    }
+
+    /// <summary>
+    /// Find AudioController in scene, or instantiate prefab if not found
+    /// </summary>
+    private void FindAudioController()
+    {
+        if(GameObject.FindGameObjectWithTag("AudioController") != null) {
+            audioController = GameObject.FindGameObjectWithTag("AudioController").GetComponent<AudioController>();
+        }
+        // Instantiate new AudioController if not found
+        else {
+            audioController = Instantiate(audioController).GetComponent<AudioController>();
+        }
     }
 
     /// <summary>
