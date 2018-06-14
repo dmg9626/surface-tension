@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour {
 	/// </summary>
 	public Player player;
 
+    public AudioController audioController;
+
     /// <summary>
     /// Mapping of materials to movement speeds
     /// </summary>
@@ -166,6 +168,8 @@ public class GameController : MonoBehaviour {
             {  materialType.STICK, stickyPreviewMaterial },
             {  materialType.NONE, null }
         };
+
+        audioController = GameObject.FindGameObjectWithTag("AudioController").GetComponent<AudioController>();
     }
 
     /// <summary>
