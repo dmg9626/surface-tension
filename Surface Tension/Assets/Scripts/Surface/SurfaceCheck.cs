@@ -5,6 +5,11 @@ using UnityEngine;
 public class SurfaceCheck : MonoBehaviour {
 
     /// <summary>
+    /// GameController
+    /// </summary>
+    GameController gameController;
+
+    /// <summary>
     /// Definition for direction player is facing
     /// </summary>
     public enum Direction
@@ -51,6 +56,7 @@ public class SurfaceCheck : MonoBehaviour {
     private void Start()
     {
         body = GetComponent<Rigidbody2D>();
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     // Update is called once per frame
@@ -88,6 +94,7 @@ public class SurfaceCheck : MonoBehaviour {
         
         if (wallType == GameController.materialType.BOUNCE && Mathf.Abs(previousState.velocity.x) >= 0)
         {
+            gameController.audioController.PlaySoundEffect(AudioController.SoundType.BOUNCE);
             body.velocity = new Vector2(-maxSlideSpeed * Mathf.Sign(previousState.velocity.x), previousState.velocity.y);
         }
         else if (groundType == GameController.materialType.BOUNCE && !(prevGroundType == GameController.materialType.BOUNCE) && 
@@ -101,7 +108,8 @@ public class SurfaceCheck : MonoBehaviour {
                 initialBounce = false;
             }
 
-            // .79 because guestimation said so 
+            // .79 because guestimation said so
+            gameController.audioController.PlaySoundEffect(AudioController.SoundType.BOUNCE);
             body.velocity = new Vector2(previousState.velocity.x, Mathf.Abs(previousState.velocity.y) + .79f + initialBounceBonus);
         }
         else if (groundType == GameController.materialType.SLIP &&
@@ -157,7 +165,7 @@ public class SurfaceCheck : MonoBehaviour {
         currentState.playerRight = RayCheck(currentState.oppDirection, null, normalLeniency, true);
 
         // Check surface below player on both layers
-        currentState.objGround = RayCheck(Direction.DOWN, null, normalLeniency, false);
+        currentState.objGround = RayCheck(Direction.DOWN, null, normalLeniency + .05f, false);
     }
 
     private bool ObjectExists(GameObject gameObject)

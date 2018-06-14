@@ -222,8 +222,6 @@ public class Player : MonoBehaviour
 
         HandleMovement(horizontalInput);
 
-        HandleAnimation();
-
         // Bounce if landed on bouncy surface
         BounceCheck();
 
@@ -239,7 +237,9 @@ public class Player : MonoBehaviour
 
         // Makes sure the player is not going to be moving faster then the max velocity
         TameVelocity();
-        
+
+        HandleAnimation();
+
         currentState.velocity = pBody.velocity;
         previousState = currentState;
     }
@@ -304,10 +304,10 @@ public class Player : MonoBehaviour
         {
             EquipMaterial(GameController.materialType.SLIP);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        /*else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             EquipMaterial(GameController.materialType.STICK);
-        }
+        }*/
     }
 
     /// <summary>
@@ -562,7 +562,7 @@ public class Player : MonoBehaviour
             {
                 calculatedBounce = minBounce;
             }
-
+            gameController.audioController.PlaySoundEffect(AudioController.SoundType.BOUNCE);
             pBody.velocity = new Vector2(pBody.velocity.x, calculatedBounce);
         }
         else if ((GetMaterial(currentState.surfFaceDir) == GameController.materialType.BOUNCE && 
@@ -601,6 +601,7 @@ public class Player : MonoBehaviour
                 bouncingHorizontal = true;
                 maintainVelocity = true;
                 bounceCounter = bounceTime;
+                gameController.audioController.PlaySoundEffect(AudioController.SoundType.BOUNCE);
             }
         }
     }
@@ -615,6 +616,7 @@ public class Player : MonoBehaviour
             if (GetMaterial(currentState.surfGround) == GameController.materialType.BOUNCE)
             {
                 // If jumping on a bouncy surface, apply the bounce
+                gameController.audioController.PlaySoundEffect(AudioController.SoundType.BOUNCE);
                 pBody.velocity = new Vector2(pBody.velocity.x, bounceMultiplier * jumpVelocity);
             }
             else
