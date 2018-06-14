@@ -5,14 +5,14 @@ using UnityEngine;
 public class AudioController : MonoBehaviour 
 {
 	public struct Audio {
-		public SoundEffectType type;
+		public SoundType type;
 		public AudioClip audioClip;
 		public AudioSource audioSource;
 		public bool looping;
 		public bool playonAwake;
 	}
 
-	public enum SoundEffectType {
+	public enum SoundType {
 		BOUNCE,
 		JUMP,
 		MATERIAL_CHANGE,
@@ -40,11 +40,6 @@ public class AudioController : MonoBehaviour
 	public AudioClip materialChange;
 
 	/// <summary>
-	/// Mapping of sound effect types onto sound effects
-	/// </summary>
-	public Dictionary<SoundEffectType, AudioClip> soundEffects;
-
-	/// <summary>
 	/// List of playable audio effects
 	/// </summary>
 	public List<Audio> audioList;
@@ -61,38 +56,33 @@ public class AudioController : MonoBehaviour
 		// Initialize list of Audio objects
 		audioList = new List<Audio> {
 			new Audio {
-				type = SoundEffectType.MUSIC,
+				type = SoundType.MUSIC,
 				audioClip = music,
 				audioSource = null,
 				looping = true,
 				playonAwake = true
 			},
 			new Audio {
-				type = SoundEffectType.JUMP,
+				type = SoundType.JUMP,
 				audioClip = jumpEffect,
 				audioSource = null,
 				looping = false,
 				playonAwake = false
 			},
 			new Audio {
-				type = SoundEffectType.MATERIAL_CHANGE,
+				type = SoundType.MATERIAL_CHANGE,
 				audioClip = materialChange,
+				audioSource = null,
+				looping = false,
+				playonAwake = false
+			}, new Audio {
+				type = SoundType.BOUNCE,
+				audioClip = bounceEffects[0],
 				audioSource = null,
 				looping = false,
 				playonAwake = false
 			}
 		};
-
-		// Add the bounce sound effects
-		foreach(AudioClip clip in bounceEffects) {
-			audioList.Add(new Audio {
-				type = SoundEffectType.BOUNCE,
-				audioClip = clip,
-				audioSource = null,
-				looping = false,
-				playonAwake = false
-			});
-		}
 
 		// Trim unassigned audio clips from audio list
 		audioList.FindAll(a => a.audioClip == null).ForEach(a => audioList.Remove(a));
@@ -103,7 +93,8 @@ public class AudioController : MonoBehaviour
 			Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
 		}
 
-		PlaySoundEffect(SoundEffectType.MUSIC);
+		// Play music at start
+		PlaySoundEffect(SoundType.MUSIC);
 	}
 
 	/// <summary>
@@ -135,32 +126,42 @@ public class AudioController : MonoBehaviour
 	/// <summary>
 	/// Plays sound effect corresponding to given SoundEffectType
 	/// </summary>
-	/// <param name="soundEffectType">Desired sound effect</param>
+	/// <param name="soundType">Desired sound effect</param>
 	/// <param name="looping">AudioClip loops if true</param>
-	public void PlaySoundEffect(SoundEffectType soundEffectType)
+	public void PlaySoundEffect(SoundType soundType)
 	{
-		// Get audioclip from dictionary
-		// AudioClip audioClip = soundEffects[soundEffectType];
-
 		// Get audio object with matching type
-		List<Audio> audios = audioList.FindAll(a => a.type == soundEffectType);
-		Audio audio;
+		Audio audio = audioList.Find(a => a.type == soundType);
 
-		// If more than one matching audio comes back,gi choose one at random
-		if(audios.Count > 1) {
-			int rand = UnityEngine.Random.Range(0, audios.Count);
-			audio = audios[rand];
-		}
-		else {
-			audio = audios[0];
-		}
-		// Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
-
-		// audio.audioSource.Play();
-
+		// Find audioSource associated with that type
 		AudioSource audioSource = transform.Find(audio.audioClip.name).GetComponent<AudioSource>();
-		Debug.Log(audio.type + " audio source is null: " + (audioSource == null).ToString());
+		// Debug.Log(audio.type + " audio source is null: " + (audioSource == null).ToString());
 
-		audioSource.Play();
+		// Get random sound effect (if others found with same soundType)
+		AudioClip clip = GetRandomSoundEffect(soundType);
+
+		audioSource.PlayOneShot(clip);
+	}
+
+	/// <summary>
+	/// Returns random audioclip associated with given type.
+	/// If only one audioclip is associated with given type, returns that audioclip
+	/// </summary>
+	/// <param name="type">SoundEffectType</param>
+	private AudioClip GetRandomSoundEffect(SoundType type) 
+	{
+		AudioClip audioClip;
+		switch(type) {
+			case SoundType.BOUNCE:
+				int rand = Random.Range(0, bounceEffects.Count);
+				audioClip = bounceEffects[rand];
+				break;
+			// If type only matches one sound effect return that one
+			default:
+				Audio audio = audioList.Find(a => a.type == type);
+				return audio.audioClip;
+		}
+
+		return audioClip;
 	}
 }
