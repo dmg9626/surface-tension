@@ -90,7 +90,6 @@ public class AudioController : MonoBehaviour
 		// Create audio source for associated audio clip
 		foreach(Audio audio in audioList) {
 			InitializeAudioSource(audio);
-			Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
 		}
 
 		// Play music at start
@@ -117,9 +116,6 @@ public class AudioController : MonoBehaviour
 
 		// Give audio a reference to its audiosource
 		audio.audioSource = audioSource;
-
-		Debug.Log(audio.type + " audio source is null: " + (audio.audioSource == null).ToString());
-		Debug.Log("Created AudioSource " + audioSource.name + " for clip " + audio.audioClip.name);
 	}
 
 
@@ -135,7 +131,6 @@ public class AudioController : MonoBehaviour
 
 		// Find audioSource associated with that type
 		AudioSource audioSource = transform.Find(audio.audioClip.name).GetComponent<AudioSource>();
-		// Debug.Log(audio.type + " audio source is null: " + (audioSource == null).ToString());
 
 		// Get random sound effect (if others found with same soundType)
 		AudioClip clip = GetRandomSoundEffect(soundType);
