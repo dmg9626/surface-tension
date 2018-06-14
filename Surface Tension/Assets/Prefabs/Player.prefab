@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxXVelocity: 10
   maxYVelocityUp: 15
-  maxYVelocityDown: -20
+  maxYVelocityDown: -18
   jumpVelocity: 6.5
   bounceMultiplier: 1.4
   horizontalBounceMultiplier: 1.5
