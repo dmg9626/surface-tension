@@ -249,8 +249,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void HandleInput()
     {
-        // Check if player pressed Restart button
+        // Check if player pressed Exit button
         restart.HandleRestart();
+
+        // Check if the player pressed the Exit button
+        HandleExit();
 
         // Get player input (horizontal)
         horizontalInput = Input.GetAxis("Horizontal");
@@ -889,6 +892,16 @@ public class Player : MonoBehaviour
         }
         else return null;
     }
+
+    private void HandleExit()
+    {
+        if (Input.GetButtonDown("Quit"))
+        {
+            Application.Quit();
+        }
+    }
 }
+
+
 
 
