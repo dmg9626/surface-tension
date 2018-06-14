@@ -109,7 +109,7 @@ public class SurfaceCheck : MonoBehaviour {
         {
             GameController.SurfaceSpeeds surfaceSpeeds = currentState.objGround.GetComponent<SurfaceMaterial>().surfaceSpeeds;
 
-            if (Mathf.Abs(body.velocity.x) > surfaceSpeeds.pushSpeed / 2f)
+            if (Mathf.Abs(body.velocity.x) > 2f)
             {
                 if (Mathf.Abs(body.velocity.x) < minSlideSpeed)
                 {
