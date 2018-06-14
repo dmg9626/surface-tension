@@ -132,7 +132,6 @@ public class SurfaceMaterial : MonoBehaviour
         // Set preview material to 2nd slot in Renderer.materials
         Material[] materials = GetComponent<Renderer>().materials;
         if(previewMaterial == null) {
-            Debug.Log("Setting preview material alpha = 0");
             Color color = materials[1].color;
             color.a = 0f;
         }

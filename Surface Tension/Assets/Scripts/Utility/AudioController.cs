@@ -8,6 +8,7 @@ public class AudioController : MonoBehaviour
 		public SoundType type;
 		public AudioClip audioClip;
 		public AudioSource audioSource;
+        public float volume;
 		public bool looping;
 		public bool playonAwake;
 	}
@@ -53,12 +54,13 @@ public class AudioController : MonoBehaviour
 		// Make sure AudioController isn't destroyed on scene change
 		DontDestroyOnLoad(gameObject);
 
-		// Initialize list of Audio objects
-		audioList = new List<Audio> {
-			new Audio {
-				type = SoundType.MUSIC,
-				audioClip = music,
-				audioSource = null,
+        // Initialize list of Audio objects
+        audioList = new List<Audio> {
+            new Audio {
+                type = SoundType.MUSIC,
+                audioClip = music,
+                audioSource = null,
+                volume = 1,
 				looping = true,
 				playonAwake = true
 			},
@@ -66,20 +68,23 @@ public class AudioController : MonoBehaviour
 				type = SoundType.JUMP,
 				audioClip = jumpEffect,
 				audioSource = null,
-				looping = false,
+                volume = 1,
+                looping = false,
 				playonAwake = false
 			},
 			new Audio {
 				type = SoundType.MATERIAL_CHANGE,
 				audioClip = materialChange,
 				audioSource = null,
-				looping = false,
+                volume = 1,
+                looping = false,
 				playonAwake = false
 			}, new Audio {
 				type = SoundType.BOUNCE,
 				audioClip = bounceEffects[0],
 				audioSource = null,
-				looping = false,
+                volume = .4f,
+                looping = false,
 				playonAwake = false
 			}
 		};
@@ -112,6 +117,7 @@ public class AudioController : MonoBehaviour
 		AudioSource audioSource = child.AddComponent<AudioSource>();
 		audioSource.clip = audio.audioClip;
 		audioSource.loop = audio.looping;
+        audioSource.volume = audio.volume;
 		audioSource.playOnAwake = audio.playonAwake;
 
 		// Give audio a reference to its audiosource
@@ -135,7 +141,14 @@ public class AudioController : MonoBehaviour
 		// Get random sound effect (if others found with same soundType)
 		AudioClip clip = GetRandomSoundEffect(soundType);
 
-		audioSource.Play();
+        if (soundType == SoundType.MUSIC)
+        {
+            audioSource.Play();
+        }
+        else
+        {
+            audioSource.PlayOneShot(clip);
+        }	
 	}
 
 	/// <summary>

@@ -699,18 +699,15 @@ public class Player : MonoBehaviour
 
         if (Mathf.Abs(velocityX) > maxXVelocity)
         {
-            Debug.Log("Too Fast X");
             velocityX = maxXVelocity * Mathf.Sign(velocityX);
         }
 
         if (velocityY > maxYVelocityUp)
         {
-            Debug.Log("Too Fast Up");
             velocityY = maxYVelocityUp;
         }
         else if (velocityY < maxYVelocityDown)
         {
-            Debug.Log("Too Fast Down");
             velocityY = maxYVelocityDown;
         }
 
@@ -793,8 +790,6 @@ public class Player : MonoBehaviour
         else {
             raycast = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
         }
-
-        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
 
         // Check for collision
         if (raycast.collider != null) {
