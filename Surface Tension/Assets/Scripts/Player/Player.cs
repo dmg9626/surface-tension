@@ -120,18 +120,40 @@ public class Player : MonoBehaviour
     /// </summary>
     private State previousState;
 
-    /// <summary>
-    /// The player's currently equipped material
-    /// </summary>
-    public GameController.materialType equippedMaterial;
+    
 
-    //Initializes pBody, this will be the player's Rigidbody2D component 
+    /// <summary>
+    /// Contains material data (equippable materials, currently equipped, etc.)
+    /// </summary>
+    [System.Serializable]
+    public class Materials {
+        /// <summary>
+        /// Player can equip bounce material if true
+        /// </summary>
+        public bool bounce;
+
+        /// <summary>
+        /// Player can equip slick material if true
+        /// </summary>
+        public bool slick;
+
+        /// <summary>
+        /// The player's currently equipped material
+        /// </summary>
+        public GameController.materialType equippedMaterial;
+    }
+
+    public Materials materials;
+
+    /// <summary>
+    /// Initializes pBody, this will be the player's Rigidbody2D component 
+    /// </summary>
     Rigidbody2D pBody;
 
     /// <summary>
     /// Particle System (child of player)
     /// </summary>
-    public ParticleSystem pSystem;
+    protected ParticleSystem pSystem;
 
     /// <summary>
     /// Definition for direction player is facing
@@ -206,7 +228,7 @@ public class Player : MonoBehaviour
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
 
         // Equip starting material
-        EquipMaterial(equippedMaterial);
+        EquipMaterial(materials.equippedMaterial);
     }
 
     // Update is called once per frame
@@ -300,11 +322,13 @@ public class Player : MonoBehaviour
     /// </summary>
     private void HandleMaterial()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        // If key is pressed and can equip bounce surface
+        if (Input.GetKeyDown(KeyCode.Alpha1) && materials.bounce)
         {
             EquipMaterial(GameController.materialType.BOUNCE);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        // If key is pressed and can equip slick surface
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && materials.slick)
         {
             EquipMaterial(GameController.materialType.SLIP);
         }
@@ -807,9 +831,10 @@ public class Player : MonoBehaviour
     /// <param name="material">Material to equip</param>
     private void EquipMaterial(GameController.materialType material)
     {
-        // Set equipped material
-        equippedMaterial = material;
+        Debug.Log("Equpping material " + material);
 
+        // Set equipped material
+        materials.equippedMaterial = material;
         
         // Set trail color
         SetTrailColor(material);
@@ -819,6 +844,7 @@ public class Player : MonoBehaviour
     {
         // Return if mapping not found in game controller
         if(!gameController.colorMapping.ContainsKey(material)) {
+            Debug.LogWarning("Trail color mapping not found for material " + material);
             return;
         }
         GameController.materialTrail trail =  gameController.colorMapping[material];

@@ -81,9 +81,9 @@ public class SurfaceMaterial : MonoBehaviour
     {
         if(changeable) {
             // Left click
-            if (Input.GetMouseButtonDown(0) && type != player.equippedMaterial)
+            if (Input.GetMouseButtonDown(0) && type != player.materials.equippedMaterial)
             {
-                ChangeSurface(player.equippedMaterial);
+                ChangeSurface(player.materials.equippedMaterial);
 
                 // Play material change sound effect
                 gameController.audioController.PlaySoundEffect(AudioController.SoundType.MATERIAL_CHANGE);
@@ -96,14 +96,11 @@ public class SurfaceMaterial : MonoBehaviour
                 // Play material change sound effect
                 gameController.audioController.PlaySoundEffect(AudioController.SoundType.MATERIAL_CHANGE);
             }
-            if(type != player.equippedMaterial) {
+            // Overlay highlight material on surface
+            PreviewMaterial(gameController.GetMaterial(player.materials.equippedMaterial, true));
 
-                // Overlay highlight material on surface
-                PreviewMaterial(gameController.GetMaterial(player.equippedMaterial, true));
-
-                // Set texture tiling to 1, 1 to handle wonky highlight texture
-                GetComponent<Renderer>().materials[1].mainTextureScale = new Vector2(1,1);
-            }
+            // Set texture tiling to 1, 1 to handle wonky highlight texture
+            GetComponent<Renderer>().materials[1].mainTextureScale = new Vector2(1,1);
         }
     }
 

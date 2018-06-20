@@ -17,7 +17,7 @@ public class SurfaceGUI : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        switch(player.equippedMaterial) {
+        switch(player.materials.equippedMaterial) {
             case GameController.materialType.BOUNCE:
                 GetComponent<Renderer>().material = ChosenSurface[0];
                 break;
